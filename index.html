@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Axel Jourdas | BTS SIO</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Axel J.</div>
+        <nav>
+            <ul>
+                  <li><a href="index.html">Accueil</a></li>
+                <li><a href="about.html">A propos de moi</a></li>
+                <li><a href="projects.html">Projets</a></li>
+                <li><a href="bts_sio.html">BTS SIO</a></li>
+                <li><a href="documentation.html">Documentation</a></li>
+                <li><a href="veille.html">Veille Technologique</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="hero">
+        <div class="hero-content">
+            <p class="subtitle">Bonjour, je suis</p>
+            <h1>Axel Jourdas</h1>
+            <h2>Étudiant en BTS SIO & Passionné de Cybersécurité</h2>
+            <p class="description">
+                Futur administrateur système et réseau, je me spécialise dans la sécurisation d'infrastructures et l'analyse de vulnérabilités.
+            </p>
+            <div class="hero-buttons">
+                <a href="CV DIGITAL SCHOOL.pdf" class="btn btn-primary" target="_blank">
+                    <i class="fas fa-download"></i> Télécharger mon CV
+                </a>
+                <a href="projects.html" class="btn btn-secondary">Voir mes projets</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            </div>
+    </section>
+
+    <section id="features">
+        <div class="container">
+            <h3>Ce que je fais</h3>
+            <div class="cards-grid">
+                <div class="card">
+                    <i class="fas fa-server"></i>
+                    <h4>Systèmes & Réseaux</h4>
+                    <p>Administration Linux/Windows et gestion de protocoles réseaux.</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Cybersécurité</h4>
+                    <p>Analyse de vulnérabilités, CTF (TryHackMe) et sécurité offensive.</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-laptop-code"></i>
+                    <h4>Support & Dev</h4>
+                    <p>Gestion de parc (GLPI), scripting Bash et développement Web.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Axel Jourdas. Tous droits réservés.</p>
+            <div class="socials">
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        window.addEventListener("scroll", function() {
+            var header = document.querySelector("header");
+            header.classList.toggle("scrolled", window.scrollY > 50);
+        });
+    </script>
+</body>
+</html>
