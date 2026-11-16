@@ -1,48 +1,68 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="no-js">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentation - Portfolio de JOURDAS AXEL</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ressources · Axel Jourdas</title>
+  <meta name="description" content="Documentations et ressources utilisées par Axel Jourdas pendant sa formation et ses projets : pfSense, Wazuh, ANSSI, CIS, Active Directory, GLPI, Proxmox.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f55d4'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='700' fill='white' text-anchor='middle'%3EAJ%3C/text%3E%3C/svg%3E">
+  <script>document.documentElement.classList.remove('no-js');try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
-    <header>
-        <h1>Documentation et Ressources</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Accueil</a></li>
-                <li><a href="about.html">A propos de moi</a></li>
-                <li><a href="projects.html">Projets</a></li>
-                <li><a href="bts_sio.html">BTS SIO</a></li>
-                <li><a href="documentation.html">Documentation</a></li>
-                <li><a href="veille.html">Veille Technologique</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+<body data-root="" data-page="ressources">
+<main id="contenu">
 
-    <section>
-        <h2>Ressources Utiles</h2>
-        <p>Cette section contient une s&eacute;lection de documentation, guides, et ressources que j'ai utilis&eacute;s et trouv&eacute;s particuli�rement utiles pour mes projets et ma formation.</p>
-        
-        <article>
-            <h3>Mes ressources personels</h3>
-            <p>Mes ressources se base sur des &eacute;xp&eacute;riences de v&eacute;cu comme par exemple les r&eacute;solutions de soucis windows.</p>
-            <a href="https://openclassrooms.com/fr/" target="_blank">Visiter la ressource</a>
-        </article>
-        
-        <article>
-            <h3>Ressource parc</h3>
-            <p>Les ressources sur un parc informatique et sont mat&eacute;riels comme les casques,calvier et souris. J'ai appris a les faire foncionner correctement.</p>
-            <a href="https://www.carm2i.fr/glossaire/parc-informatique/" target="_blank">Visiter la ressource</a>
-        </article>
-        
-       
-    </section>
+  <header class="page-head">
+    <div class="container">
+      <span class="eyebrow">Ressources</span>
+      <h1>Documentation et ressources</h1>
+      <p class="lead">Les documentations qui m'ont servi pendant ma formation et mes projets. Ma règle : partir de la documentation officielle avant les tutoriels.</p>
+    </div>
+  </header>
 
-    <footer>
-        <p>En 2025 JOURDAS Axel. Tous droits r&eacute;serv&eacute;s.</p>
-    </footer>
+  <section style="padding-bottom:40px">
+    <div class="container">
+      <h2 class="reveal">Documentations officielles utilisées dans mes projets</h2>
+      <div class="grid grid-3">
+        <a class="card project-card reveal" href="https://docs.netgate.com/pfsense/en/latest/" target="_blank" rel="noopener"><div class="body"><div class="tags"><span class="tag tag--reseau">Réseau</span></div><h3>Documentation pfSense</h3><p>Installation, interfaces, règles de pare-feu, OpenVPN.</p><div class="meta"><span>Netgate</span><span class="more">Ouvrir ↗</span></div></div></a>
+        <a class="card project-card reveal" href="https://pve.proxmox.com/pve-docs/" target="_blank" rel="noopener"><div class="body"><div class="tags"><span class="tag tag--systeme">Système</span></div><h3>Documentation Proxmox VE</h3><p>Création de VM, ponts réseau, stockage.</p><div class="meta"><span>Proxmox</span><span class="more">Ouvrir ↗</span></div></div></a>
+        <a class="card project-card reveal" href="https://documentation.wazuh.com/current/" target="_blank" rel="noopener"><div class="body"><div class="tags"><span class="tag tag--securite">Sécurité</span></div><h3>Documentation Wazuh</h3><p>Guide de démarrage rapide, prérequis matériels, agents.</p><div class="meta"><span>Wazuh</span><span class="more">Ouvrir ↗</span></div></div></a>
+        <a class="card project-card reveal" href="https://cyber.gouv.fr/" target="_blank" rel="noopener"><div class="body"><div class="tags"><span class="tag tag--securite">Sécurité</span></div><h3>Guides de l'ANSSI</h3><p>Recommandations de sécurité et d'hygiène informatique.</p><div class="meta"><span>ANSSI</span><span class="more">Ouvrir ↗</span></div></div></a>
+        <a class="card project-card reveal" href="https://www.cisecurity.org/cis-benchmarks" target="_blank" rel="noopener"><div class="body"><div class="tags"><span class="tag tag--securite">Sécurité</span></div><h3>CIS Benchmarks</h3><p>Référentiels de durcissement (niveau 1) pour Windows et Linux.</p><div class="meta"><span>CIS</span><span class="more">Ouvrir ↗</span></div></div></a>
+        <a class="card project-card reveal" href="https://cisofy.com/lynis/" target="_blank" rel="noopener"><div class="body"><div class="tags"><span class="tag tag--securite">Sécurité</span></div><h3>Lynis</h3><p>Outil d'audit de sécurité pour Linux.</p><div class="meta"><span>CISOfy</span><span class="more">Ouvrir ↗</span></div></div></a>
+        <a class="card project-card reveal" href="https://learn.microsoft.com/fr-fr/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview" target="_blank" rel="noopener"><div class="body"><div class="tags"><span class="tag tag--systeme">Système</span></div><h3>Active Directory (Microsoft Learn)</h3><p>Services de domaine, GPO, PowerShell.</p><div class="meta"><span>Microsoft</span><span class="more">Ouvrir ↗</span></div></div></a>
+        <a class="card project-card reveal" href="https://glpi-user-documentation.readthedocs.io/fr/latest/" target="_blank" rel="noopener"><div class="body"><div class="tags"><span class="tag tag--support">Support</span></div><h3>Documentation GLPI</h3><p>Utilisation, tickets, parc, profils.</p><div class="meta"><span>GLPI</span><span class="more">Ouvrir ↗</span></div></div></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container grid grid-2">
+      <div class="reveal">
+        <span class="eyebrow">Ressources personnelles</span>
+        <h2>Ce qui m'a aidé à apprendre</h2>
+        <div class="card" style="margin-bottom:16px">
+          <h3>OpenClassrooms</h3>
+          <p class="muted">Cours en ligne gratuits sur l'informatique, utiles pour revoir une notion. Je m'en suis aussi servi pour résoudre des problèmes Windows rencontrés en entreprise ou en cours.</p>
+          <a href="https://openclassrooms.com/fr/" target="_blank" rel="noopener">Visiter OpenClassrooms ↗</a>
+        </div>
+        <div class="card">
+          <h3>Glossaire du parc informatique (Carm2i)</h3>
+          <p class="muted">Définition et organisation d'un parc informatique : postes, périphériques, inventaire. Ce que j'en ai retenu : installer, configurer et suivre correctement chaque équipement.</p>
+          <a href="https://www.carm2i.fr/glossaire/parc-informatique/" target="_blank" rel="noopener">Lire le glossaire ↗</a>
+        </div>
+      </div>
+      <div class="reveal">
+        <span class="eyebrow">Mes documents</span>
+        <h2>Mes comptes-rendus</h2>
+        <p>Chaque projet de ce portfolio vient d'un compte-rendu de TP que j'ai rédigé : étapes, commandes, captures et problèmes rencontrés. Les pages projets en reprennent l'essentiel.</p>
+        <p><a class="btn btn-ghost" href="projects.html">Voir les projets</a></p>
+        <p><a class="btn btn-ghost" href="CV%20DIGITAL%20SCHOOL.pdf" target="_blank" rel="noopener">Mon CV (PDF)</a></p>
+      </div>
+    </div>
+  </section>
+
+</main>
+<script src="assets/js/main.js" defer></script>
 </body>
 </html>

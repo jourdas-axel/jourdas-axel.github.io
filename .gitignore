@@ -3,3 +3,5 @@
 # Fichiers système
 desktop.ini
 Thumbs.db
+# Config locale de l'aperçu Claude
+.claude/

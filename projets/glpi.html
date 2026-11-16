@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLPI : parc et support · Axel Jourdas</title>
+  <meta name="description" content="Déploiement de GLPI sur un serveur local, inventaire du parc, gestion du cycle de vie des tickets, priorisation et base de connaissances.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f55d4'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='700' fill='white' text-anchor='middle'%3EAJ%3C/text%3E%3C/svg%3E">
+  <script>document.documentElement.classList.remove('no-js');try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-root="../" data-page="projets">
+<main id="contenu">
+
+  <header class="project-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="../projects.html">Projets</a> / GLPI</p>
+      <h1>GLPI : gestion de parc et centre de support</h1>
+      <p class="lead">Déployer GLPI sur un serveur web local, inventorier le parc, organiser le support (profils, catégories) et traiter des tickets de bout en bout.</p>
+      <div class="tags"><span class="tag tag--support">Support</span><span class="tag tag--systeme">Système</span><span class="chip">GLPI 10</span><span class="chip">Apache</span><span class="chip">PHP</span><span class="chip">MariaDB</span><span class="chip">FusionInventory</span></div>
+      <dl class="facts">
+        <div><dt>Période</dt><dd>BTS SIO 1 puis mai 2026</dd></div>
+        <div><dt>Cadre</dt><dd>TP en groupe</dd></div>
+        <div><dt>Équipe</dt><dd>Avec A. Faouzi et B. Letaief</dd></div>
+        <div><dt>Tickets traités</dt><dd>4 scénarios + 3 tickets</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="container layout-doc">
+    <aside class="toc" aria-label="Sommaire">
+      <p>Sommaire</p>
+      <ol>
+        <li><a href="#contexte">Contexte</a></li>
+        <li><a href="#deploiement">Déploiement</a></li>
+        <li><a href="#organisation">Organisation</a></li>
+        <li><a href="#tickets">Tickets</a></li>
+        <li><a href="#priorite">Priorisation</a></li>
+        <li><a href="#problemes">Problèmes</a></li>
+        <li><a href="#bilan">Bilan</a></li>
+      </ol>
+    </aside>
+
+    <article class="doc">
+      <section id="contexte">
+        <h2>Contexte</h2>
+        <p>Dans un établissement, les demandes arrivent par téléphone, par mail ou dans le couloir, et se perdent. <strong>GLPI</strong> centralise l'inventaire du matériel et les demandes d'assistance : chaque incident devient un ticket suivi, priorisé et documenté.</p>
+        <p>J'ai travaillé sur GLPI à deux reprises : une première installation en BTS SIO 1, avec l'inventaire du parc et le plugin FusionInventory, puis un TP plus complet en mai 2026 sur l'organisation d'un centre de support.</p>
+      </section>
+
+      <section id="deploiement">
+        <h2>Déploiement</h2>
+        <p>GLPI est une application web : elle tourne sur un serveur et chacun y accède par son navigateur, sans rien installer sur son poste.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Brique</th><th>Rôle</th></tr></thead>
+          <tbody>
+            <tr><td>Apache</td><td>Serveur web : reçoit les requêtes HTTP et renvoie les pages</td></tr>
+            <tr><td>PHP</td><td>Exécute le code de GLPI et génère les pages dynamiques</td></tr>
+            <tr><td>MariaDB</td><td>Stocke les tickets, les utilisateurs, l'inventaire et l'historique</td></tr>
+          </tbody>
+        </table></div>
+        <div class="code"><div class="code-head"><span>MariaDB · création de la base</span><button class="copy-btn" type="button">Copier</button></div><pre><span class="cm">-- Base dédiée, encodage complet (accents, caractères spéciaux)</span>
+<span class="kw">CREATE DATABASE</span> glpi <span class="kw">CHARACTER SET</span> utf8mb4 <span class="kw">COLLATE</span> utf8mb4_unicode_ci;
+<span class="cm">-- Utilisateur dédié plutôt que root : moindre privilège</span>
+<span class="kw">CREATE USER</span> <span class="st">'glpiuser'</span>@<span class="st">'localhost'</span> <span class="kw">IDENTIFIED BY</span> <span class="st">'********'</span>;
+<span class="kw">GRANT ALL PRIVILEGES ON</span> glpi.* <span class="kw">TO</span> <span class="st">'glpiuser'</span>@<span class="st">'localhost'</span>;
+<span class="kw">FLUSH PRIVILEGES</span>;</pre></div>
+        <div class="callout"><strong>Pourquoi un utilisateur dédié ?</strong><p>Si GLPI était compromis, l'attaquant n'aurait accès qu'à la base <code>glpi</code>, pas à toutes les bases du serveur comme avec le compte <code>root</code>.</p></div>
+        <div class="gallery">
+          <figure><img src="../assets/img/projets/glpi/01-xampp.jpg" alt="Panneau XAMPP avec Apache et MySQL démarrés" loading="lazy"><figcaption>Serveur local : Apache et MySQL démarrés</figcaption></figure>
+          <figure><img src="../assets/img/projets/glpi/02-phpmyadmin-base.jpg" alt="Base glpi dans phpMyAdmin" loading="lazy"><figcaption>Base glpi créée</figcaption></figure>
+          <figure><img src="../assets/img/projets/glpi/06-installation.jpg" alt="Assistant d'installation de GLPI" loading="lazy"><figcaption>Assistant d'installation : vérification des prérequis</figcaption></figure>
+          <figure><img src="../assets/img/projets/glpi/03-tableau-de-bord.jpg" alt="Tableau de bord GLPI" loading="lazy"><figcaption>Tableau de bord GLPI</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="organisation">
+        <h2>Organisation du support</h2>
+        <div class="grid grid-2">
+          <div class="card"><h3>Comptes et profils</h3><ul><li><code>enseignant1</code>, <code>admin1</code> : profil utilisateur (<em>Self-Service</em>), ils déclarent des demandes</li><li><code>technicien1</code> : profil <em>Technicien</em>, il prend en charge et résout</li></ul><p class="muted">Un utilisateur ne voit que ses tickets. Le technicien a accès aux outils de suivi.</p></div>
+          <div class="card"><h3>Catégories de tickets</h3><div class="tags"><span class="tag">Compte et accès</span><span class="tag">Réseau et Wi-Fi</span><span class="tag">Matériel</span><span class="tag">Logiciel</span><span class="tag">Messagerie</span></div><p class="muted" style="margin-top:12px">Les catégories orientent le ticket vers la bonne personne et servent aux statistiques.</p></div>
+        </div>
+        <figure class="shot"><img src="../assets/img/projets/glpi/07-inventaire-ordinateur.jpg" alt="Fiche d'un ordinateur dans l'inventaire GLPI" loading="lazy"><figcaption>Inventaire : fiche d'un ordinateur du parc</figcaption></figure>
+      </section>
+
+      <section id="tickets">
+        <h2>Cycle de vie des tickets</h2>
+        <p>Création → qualification → affectation → suivi → résolution → clôture. Quatre scénarios ont été traités :</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Ticket</th><th>Type</th><th>Catégorie</th><th>Priorité</th><th>Solution</th></tr></thead>
+          <tbody>
+            <tr><td>Impossible d'ouvrir la session Windows</td><td>Incident</td><td>Compte et accès</td><td>Haute</td><td>Mot de passe réinitialisé dans l'AD, reconnexion vérifiée</td></tr>
+            <tr><td>Configurer l'imprimante multifonction (salle B)</td><td>Demande</td><td>Matériel</td><td>Moyenne</td><td>Imprimante déployée, code d'impression transmis de façon sécurisée</td></tr>
+            <tr><td>Coupure totale du Wi-Fi en salle 305</td><td>Incident</td><td>Réseau et Wi-Fi</td><td>Très haute</td><td>Redémarrage PoE de la borne depuis le switch, signal vérifié</td></tr>
+            <tr><td>Installer Packet Tracer (salle 112)</td><td>Demande</td><td>Logiciel</td><td>Basse</td><td>Déploiement centralisé sur tous les postes, installation vérifiée</td></tr>
+          </tbody>
+        </table></div>
+        <div class="gallery">
+          <figure><img src="../assets/img/projets/glpi/04-ticket-incident.jpg" alt="Ticket d'incident dans GLPI" loading="lazy"><figcaption>Ticket d'incident qualifié</figcaption></figure>
+          <figure><img src="../assets/img/projets/glpi/05-ticket-suivi.jpg" alt="Suivi technique d'un ticket" loading="lazy"><figcaption>Suivi technique et solution</figcaption></figure>
+          <figure><img src="../assets/img/projets/glpi/08-liste-tickets.jpg" alt="Liste des tickets clôturés et en cours" loading="lazy"><figcaption>Tickets clôturés et en cours</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="priorite">
+        <h2>Démo : urgence × impact = priorité</h2>
+        <p>Dans GLPI, la priorité n'est pas choisie au hasard : elle se calcule à partir de l'urgence (le délai acceptable) et de l'impact (le nombre de personnes touchées). Cliquez sur une case :</p>
+        <div class="matrix" data-output="matrix-out" role="group" aria-label="Matrice de priorité">
+          <span class="h"></span><span class="h">Impact bas</span><span class="h">Impact moyen</span><span class="h">Impact haut</span>
+          <span class="h">Urgence haute</span>
+          <button type="button" data-u="haute" data-i="bas" data-p="3">Moyenne</button>
+          <button type="button" data-u="haute" data-i="moyen" data-p="4" data-ex="Exemple : un enseignant ne peut plus ouvrir sa session.">Haute</button>
+          <button type="button" data-u="haute" data-i="haut" data-p="5" data-ex="Exemple : plus de Wi-Fi dans une salle de 30 élèves.">Très haute</button>
+          <span class="h">Urgence moyenne</span>
+          <button type="button" data-u="moyenne" data-i="bas" data-p="2">Basse</button>
+          <button type="button" data-u="moyenne" data-i="moyen" data-p="3" data-ex="Exemple : configurer l'imprimante d'une salle.">Moyenne</button>
+          <button type="button" data-u="moyenne" data-i="haut" data-p="4">Haute</button>
+          <span class="h">Urgence basse</span>
+          <button type="button" data-u="basse" data-i="bas" data-p="1">Très basse</button>
+          <button type="button" data-u="basse" data-i="moyen" data-p="2" data-ex="Exemple : installer un nouveau logiciel pour un cours à venir.">Basse</button>
+          <button type="button" data-u="basse" data-i="haut" data-p="3">Moyenne</button>
+        </div>
+        <p id="matrix-out" class="callout" aria-live="polite">Choisissez une combinaison pour voir la priorité obtenue.</p>
+      </section>
+
+      <section id="problemes">
+        <h2>Problèmes rencontrés</h2>
+        <div class="problems">
+          <div class="problem"><div><span class="label label--ko">Problème</span>Première installation : fichiers corrompus ou manquants, puis erreur MySQL « Aria checksum ».</div><div><span class="label label--ok">Ce que j'en ai tiré</span>Avant de relancer une installation, vérifier l'intégrité de l'archive téléchargée et l'état du service MySQL (journaux XAMPP).</div></div>
+          <div class="problem"><div><span class="label label--ko">Problème</span>Le plugin FusionInventory ne reconnaissait pas l'agent du poste client, malgré la connexion.</div><div><span class="label label--ok">État</span>Inventaire des postes saisi manuellement. Piste : FusionInventory n'est plus maintenu, et GLPI 10 intègre désormais son propre inventaire natif.</div></div>
+        </div>
+        <figure class="shot"><img src="../assets/img/projets/glpi/09-erreur-mysql.jpg" alt="Erreur MySQL dans phpMyAdmin" loading="lazy"><figcaption>L'erreur MySQL rencontrée lors de la première installation</figcaption></figure>
+      </section>
+
+      <section id="bilan">
+        <h2>Bilan</h2>
+        <div class="grid grid-2">
+          <div class="card"><h3>Compétences mobilisées</h3><ul><li>Installation d'une application web (Apache, PHP, MariaDB)</li><li>Gestion du parc et inventaire</li><li>Traitement et priorisation des incidents</li><li>Rédaction de solutions et base de connaissances</li></ul></div>
+          <div class="card"><h3>Ce que j'en retiens</h3><ul><li>Un ticket clôturé sans solution détaillée, c'est du savoir perdu.</li><li>Une base de connaissances simple fait baisser le nombre de tickets.</li><li>En production : HTTPS, sauvegardes et comptes robustes sont indispensables.</li></ul></div>
+        </div>
+        <nav class="pager" aria-label="Projets voisins" style="margin-top:28px">
+          <a href="durcissement-windows.html"><small>← Projet précédent</small>Durcissement Windows</a>
+          <a class="next" href="active-directory.html"><small>Projet suivant →</small>Active Directory</a>
+        </nav>
+      </section>
+    </article>
+  </div>
+</main>
+<script src="../assets/js/main.js" defer></script>
+</body>
+</html>

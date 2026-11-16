@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Durcissement Windows · Axel Jourdas</title>
+  <meta name="description" content="Durcissement d'un poste client Windows selon CIS niveau 1 et l'ANSSI : comptes, mots de passe, verrouillage, SMBv1, NTLMv2, LLMNR, AutoRun, journalisation.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f55d4'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='700' fill='white' text-anchor='middle'%3EAJ%3C/text%3E%3C/svg%3E">
+  <script>document.documentElement.classList.remove('no-js');try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-root="../" data-page="projets">
+<main id="contenu">
+
+  <header class="project-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="../projects.html">Projets</a> / Durcissement Windows</p>
+      <h1>Durcissement d'un poste client Windows</h1>
+      <p class="lead">Contexte Maison des Ligues : un poste livré avec la configuration par défaut, durci selon le niveau 1 du CIS et les recommandations de l'ANSSI. Chaque mesure est justifiée et prouvée.</p>
+      <div class="tags"><span class="tag tag--securite">Sécurité</span><span class="tag tag--systeme">Système</span><span class="chip">Windows</span><span class="chip">PowerShell</span><span class="chip">GPO locales</span><span class="chip">CIS L1</span><span class="chip">ANSSI</span></div>
+      <dl class="facts">
+        <div><dt>Période</dt><dd>Septembre 2026</dd></div>
+        <div><dt>Cadre</dt><dd>TP · BTS SIO 2</dd></div>
+        <div><dt>Méthode</dt><dd>VM restaurée au snapshot T0</dd></div>
+        <div><dt>Paramètres durcis</dt><dd>13</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="container layout-doc">
+    <aside class="toc" aria-label="Sommaire">
+      <p>Sommaire</p>
+      <ol>
+        <li><a href="#contexte">Contexte</a></li>
+        <li><a href="#avant-apres">Avant / après</a></li>
+        <li><a href="#commandes">Commandes clés</a></li>
+        <li><a href="#captures">Captures</a></li>
+        <li><a href="#bilan">Bilan</a></li>
+      </ol>
+    </aside>
+
+    <article class="doc">
+      <section id="contexte">
+        <h2>Contexte et démarche</h2>
+        <p>Le poste a été durci sur une VM restaurée à un instantané de départ (« T0 »), avec une règle : <strong>ne jamais perdre l'accès</strong> à la machine. La démarche :</p>
+        <ol class="steps">
+          <li><strong>Audit initial</strong>Ports ouverts (<code>netstat -ano</code>), services actifs, comptes locaux, configuration SMB. Les comptes Administrateur et Invité étaient actifs par défaut : des cibles faciles pour une attaque par force brute.</li>
+          <li><strong>Durcissement</strong>Comptes, stratégie de mots de passe, verrouillage, protocoles obsolètes, résolution de noms, exécution automatique, journalisation.</li>
+          <li><strong>Contre-audit</strong>Mêmes commandes qu'au départ et rapport <code>gpresult /h</code> pour valider l'application des stratégies.</li>
+        </ol>
+      </section>
+
+      <section id="avant-apres">
+        <h2>Avant / après</h2>
+        <p>Basculez entre l'état d'origine du poste et l'état après durcissement.</p>
+        <div class="switch" data-target="ba-table" role="group" aria-label="État affiché">
+          <button type="button" class="active" data-state="before" aria-pressed="true">État initial</button>
+          <button type="button" data-state="after" aria-pressed="false">Après durcissement</button>
+        </div>
+        <div class="table-wrap" id="ba-table" data-state="before"><table>
+          <thead><tr><th>Paramètre</th><th>Valeur</th><th>Pourquoi</th></tr></thead>
+          <tbody>
+            <tr><td>Compte Invité</td><td><span class="val-before ko">Activé</span><span class="val-after ok">Désactivé</span></td><td>Compte sans mot de passe connu de tous</td></tr>
+            <tr><td>Compte administrateur</td><td><span class="val-before ko">« Administrateur »</span><span class="val-after ok">Renommé « Admin_Securise »</span></td><td>Les attaques visent les noms de comptes standards</td></tr>
+            <tr><td>Historique des mots de passe</td><td><span class="val-before ko">Non défini</span><span class="val-after ok">24 mémorisés</span></td><td>Empêche de réutiliser un ancien mot de passe</td></tr>
+            <tr><td>Durée de vie max.</td><td><span class="val-before">42 jours</span><span class="val-after ok">365 jours</span></td><td>Avec des mots de passe longs, on change moins souvent</td></tr>
+            <tr><td>Durée de vie min.</td><td><span class="val-before">0 à 1 jour</span><span class="val-after ok">1 jour</span></td><td>Bloque le contournement de l'historique</td></tr>
+            <tr><td>Longueur minimale</td><td><span class="val-before ko">7 caractères</span><span class="val-after ok">14 caractères</span></td><td>La longueur est le premier facteur de robustesse</td></tr>
+            <tr><td>Seuil de verrouillage</td><td><span class="val-before ko">Non configuré</span><span class="val-after ok">5 tentatives</span></td><td>Anti force brute (testé : blocage au 6<sup>e</sup> essai)</td></tr>
+            <tr><td>Durée de verrouillage</td><td><span class="val-before ko">Non configurée</span><span class="val-after ok">15 minutes</span></td><td>Ralentit fortement une attaque</td></tr>
+            <tr><td>SMBv1</td><td><span class="val-before">Désactivé</span><span class="val-after ok">Désactivé (contrôlé)</span></td><td>Protocole exploité par WannaCry</td></tr>
+            <tr><td>LAN Manager</td><td><span class="val-before ko">Non forcé</span><span class="val-after ok">NTLMv2 uniquement</span></td><td>Interdit les anciennes authentifications faibles</td></tr>
+            <tr><td>LLMNR</td><td><span class="val-before ko">Activé</span><span class="val-after ok">Désactivé</span></td><td>Évite l'usurpation de noms sur le réseau local</td></tr>
+            <tr><td>Exécution auto (USB)</td><td><span class="val-before ko">Activée</span><span class="val-after ok">Désactivée</span></td><td>Bloque l'infection par clé USB</td></tr>
+            <tr><td>Journal de sécurité / audit</td><td><span class="val-before ko">Taille par défaut, audit non configuré</span><span class="val-after ok">128 Mo, audit des connexions (succès et échecs)</span></td><td>Garder des traces exploitables</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="commandes">
+        <h2>Commandes clés</h2>
+        <div class="code"><div class="code-head"><span>PowerShell (administrateur)</span><button class="copy-btn" type="button">Copier</button></div><pre><span class="cm"># Audit : ports, services actifs, comptes, SMB</span>
+<span class="pr">PS&gt; </span>netstat -ano
+<span class="pr">PS&gt; </span>Get-Service | Where-Object {$_.Status -eq "Running"}
+<span class="pr">PS&gt; </span>Get-LocalUser
+<span class="pr">PS&gt; </span>Get-SmbServerConfiguration | Select-Object EnableSMB1Protocol
+
+<span class="cm"># Comptes : désactiver Invité, renommer l'administrateur</span>
+<span class="pr">PS&gt; </span>Disable-LocalUser -Name "Invité"
+<span class="pr">PS&gt; </span>Rename-LocalUser -Name "Administrateur" -NewName "Admin_Securise"
+
+<span class="cm"># Verrouillage : 5 essais, fenêtre et durée de 15 min</span>
+<span class="pr">PS&gt; </span>net accounts /lockoutwindow:15 /lockoutduration:15 /lockoutthreshold:5
+
+<span class="cm"># Forcer NTLMv2 (registre)</span>
+<span class="pr">PS&gt; </span>Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LmCompatibilityLevel" -Value 3
+
+<span class="cm"># Rapport de validation des stratégies</span>
+<span class="pr">PS&gt; </span>gpresult /h rapport.html</pre></div>
+        <p>LLMNR, l'exécution automatique et l'audit des connexions ont été réglés dans l'éditeur de stratégie de groupe locale (<code>gpedit.msc</code>).</p>
+      </section>
+
+      <section id="captures">
+        <h2>Captures</h2>
+        <p class="muted">Photos d'écran prises pendant le TP.</p>
+        <div class="gallery">
+          <figure><img src="../assets/img/projets/durcissement-windows/02-comptes-avant.jpg" alt="Get-LocalUser avant durcissement" loading="lazy"><figcaption>Audit : comptes locaux d'origine</figcaption></figure>
+          <figure><img src="../assets/img/projets/durcissement-windows/03-comptes-apres.jpg" alt="Comptes après : Invité désactivé, admin renommé" loading="lazy"><figcaption>Invité désactivé, admin renommé</figcaption></figure>
+          <figure><img src="../assets/img/projets/durcissement-windows/04-registre-ntlmv2.jpg" alt="Clé de registre LmCompatibilityLevel" loading="lazy"><figcaption>Registre : LmCompatibilityLevel</figcaption></figure>
+          <figure><img src="../assets/img/projets/durcissement-windows/05-audit-connexions.jpg" alt="Stratégie d'audit des connexions" loading="lazy"><figcaption>Audit des connexions (gpedit)</figcaption></figure>
+          <figure><img src="../assets/img/projets/durcissement-windows/01-audit-netstat.jpg" alt="netstat -ano : ports en écoute" loading="lazy"><figcaption>netstat -ano : ports en écoute</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="bilan">
+        <h2>Bilan</h2>
+        <div class="grid grid-2">
+          <div class="card"><h3>Compétences mobilisées</h3><ul><li>Administration Windows en PowerShell</li><li>Stratégies de sécurité locales et registre</li><li>Application d'un référentiel (CIS L1, ANSSI)</li><li>Démarche audit, action, contre-audit</li></ul></div>
+          <div class="card"><h3>Ce que j'en retiens</h3><ul><li>Travailler sur un snapshot permet de tester sans risque.</li><li>Chaque réglage doit répondre à une menace précise, sinon il est difficile à justifier.</li><li>Ces mêmes règles se déploient à grande échelle par GPO dans un <a href="active-directory.html">domaine Active Directory</a>.</li></ul></div>
+        </div>
+        <nav class="pager" aria-label="Projets voisins" style="margin-top:28px">
+          <a href="durcissement-linux.html"><small>← Projet précédent</small>Durcissement Linux</a>
+          <a class="next" href="glpi.html"><small>Projet suivant →</small>GLPI : parc et support</a>
+        </nav>
+      </section>
+    </article>
+  </div>
+</main>
+<script src="../assets/js/main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Active Directory TechNova · Axel Jourdas</title>
+  <meta name="description" content="Mise en place d'un domaine Active Directory pour une PME fictive : AD DS, DNS, DHCP, OU, méthode AGDLP, partages NTFS et stratégies de groupe.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f55d4'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='700' fill='white' text-anchor='middle'%3EAJ%3C/text%3E%3C/svg%3E">
+  <script>document.documentElement.classList.remove('no-js');try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-root="../" data-page="projets">
+<main id="contenu">
+
+  <header class="project-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="../projects.html">Projets</a> / Active Directory</p>
+      <h1>Domaine Active Directory pour la PME « TechNova »</h1>
+      <p class="lead">Centraliser les comptes, sécuriser les accès aux partages et configurer automatiquement les postes d'une PME de 30 salariés répartis en 4 services.</p>
+      <div class="tags"><span class="tag tag--systeme">Système</span><span class="tag tag--reseau">Réseau</span><span class="chip">Windows Server 2022</span><span class="chip">AD DS</span><span class="chip">DNS</span><span class="chip">DHCP</span><span class="chip">GPO</span><span class="chip">PowerShell</span></div>
+      <dl class="facts">
+        <div><dt>Période</dt><dd>Novembre 2026</dd></div>
+        <div><dt>Cadre</dt><dd>Projet du BTS blanc</dd></div>
+        <div><dt>Domaine</dt><dd>technova.local</dd></div>
+        <div><dt>Postes</dt><dd>1 DC + clients Windows</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="container layout-doc">
+    <aside class="toc" aria-label="Sommaire">
+      <p>Sommaire</p>
+      <ol>
+        <li><a href="#contexte">Contexte</a></li>
+        <li><a href="#infra">Infrastructure</a></li>
+        <li><a href="#ou">Arborescence</a></li>
+        <li><a href="#agdlp">Groupes et droits</a></li>
+        <li><a href="#gpo">Stratégies de groupe</a></li>
+        <li><a href="#tests">Tests</a></li>
+        <li><a href="#bilan">Bilan</a></li>
+      </ol>
+    </aside>
+
+    <article class="doc">
+      <section id="contexte">
+        <h2>Contexte</h2>
+        <p>TechNova compte 30 salariés dans 4 services : Direction, Comptabilité, Commercial et Informatique. Aujourd'hui, chaque poste a ses comptes locaux, les dossiers partagés sont ouverts à tous et chaque PC est configuré à la main.</p>
+        <p><strong>Besoins :</strong> un compte unique par salarié, des droits d'accès par service et une configuration automatique des postes.</p>
+      </section>
+
+      <section id="infra">
+        <h2>Infrastructure</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Machine</th><th>Système</th><th>Rôles</th><th>Adresse</th></tr></thead>
+          <tbody>
+            <tr><td><code>SRV-DC01</code></td><td>Windows Server 2022</td><td>AD DS (contrôleur de domaine), DNS, DHCP</td><td><code>192.168.10.10/24</code> (fixe)</td></tr>
+            <tr><td>Postes clients</td><td>Windows 10 / 11</td><td>Membres du domaine</td><td>DHCP <code>.100</code> à <code>.200</code></td></tr>
+          </tbody>
+        </table></div>
+        <ol class="steps">
+          <li><strong>Contrôleur de domaine</strong>IP fixe, rôle AD DS puis promotion : création de la forêt <code>technova.local</code>.</li>
+          <li><strong>DNS</strong>Zone directe créée automatiquement, et ajout d'une zone de recherche inversée.</li>
+          <li><strong>DHCP</strong>Rôle autorisé dans l'AD, étendue avec passerelle et DNS, réservation pour une imprimante.</li>
+          <li><strong>Jonction des postes</strong>Clients joints au domaine, rangés dans l'OU <code>Ordinateurs</code>, connexion avec un compte du domaine.</li>
+        </ol>
+      </section>
+
+      <section id="ou">
+        <h2>Arborescence des unités d'organisation</h2>
+        <p>Une OU par service, pour pouvoir appliquer des stratégies et déléguer l'administration service par service. Dépliez l'arbre :</p>
+        <div class="tree">
+          <ul>
+            <li><details open><summary><span class="ou">technova.local</span></summary>
+              <ul><li><details open><summary><span class="ou">TECHNOVA</span></summary>
+                <ul>
+                  <li><details open><summary><span class="ou">Utilisateurs</span></summary>
+                    <ul>
+                      <li><details><summary><span class="ou">Direction</span></summary><ul><li class="usr">comptes au format p.nom</li></ul></details></li>
+                      <li><details><summary><span class="ou">Comptabilite</span></summary><ul><li class="usr">comptes au format p.nom</li></ul></details></li>
+                      <li><details><summary><span class="ou">Commercial</span></summary><ul><li class="usr">comptes au format p.nom</li></ul></details></li>
+                      <li><details><summary><span class="ou">Informatique</span></summary><ul><li class="usr">comptes au format p.nom</li></ul></details></li>
+                    </ul></details></li>
+                  <li><details><summary><span class="ou">Groupes</span></summary><ul><li class="grp">GG_Direction · GG_Compta · GG_Commercial · GG_Info</li><li class="grp">DL_Compta_RW · DL_Commercial_RW · DL_Commun_R …</li></ul></details></li>
+                  <li><details><summary><span class="ou">Ordinateurs</span></summary><ul><li class="usr">postes clients joints au domaine</li></ul></details></li>
+                  <li><details><summary><span class="ou">Serveurs</span></summary><ul><li class="usr">SRV-DC01</li></ul></details></li>
+                </ul></details></li></ul>
+            </details></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="agdlp">
+        <h2>Groupes et droits : la méthode AGDLP</h2>
+        <p><strong>A</strong>ccounts → <strong>G</strong>lobal groups → <strong>D</strong>omain <strong>L</strong>ocal groups → <strong>P</strong>ermissions. Les comptes vont dans un groupe global par service. Les droits NTFS ne sont jamais donnés aux personnes, mais à des groupes domaine local.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Partage</th><th>Groupe domaine local</th><th>Membres (groupes globaux)</th><th>Droit</th></tr></thead>
+          <tbody>
+            <tr><td><code>D:\Partages\Comptabilite</code></td><td><code>DL_Compta_RW</code></td><td><code>GG_Compta</code></td><td>Modification</td></tr>
+            <tr><td><code>D:\Partages\Commercial</code></td><td><code>DL_Commercial_RW</code></td><td><code>GG_Commercial</code></td><td>Modification</td></tr>
+            <tr><td><code>D:\Partages\Commun</code></td><td><code>DL_Commun_R</code></td><td>tous les <code>GG_*</code></td><td>Lecture</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>Pourquoi c'est mieux ?</strong><p>Quand un salarié change de service, on le change simplement de groupe global. Aucun droit NTFS n'est à retoucher.</p></div>
+        <p>Les mêmes opérations en PowerShell :</p>
+        <div class="code"><div class="code-head"><span>PowerShell · module ActiveDirectory</span><button class="copy-btn" type="button">Copier</button></div><pre><span class="cm"># Créer un utilisateur dans l'OU de son service</span>
+<span class="pr">PS&gt; </span>New-ADUser -Name "Jean Dupont" -SamAccountName "j.dupont" `
+      -Path "OU=Comptabilite,OU=Utilisateurs,OU=TECHNOVA,DC=technova,DC=local" `
+      -AccountPassword (Read-Host -AsSecureString) -Enabled $true
+
+<span class="cm"># A → G : l'ajouter au groupe global du service</span>
+<span class="pr">PS&gt; </span>Add-ADGroupMember -Identity "GG_Compta" -Members "j.dupont"
+
+<span class="cm"># G → DL : le groupe global devient membre du groupe de droits</span>
+<span class="pr">PS&gt; </span>Add-ADGroupMember -Identity "DL_Compta_RW" -Members "GG_Compta"
+
+<span class="cm"># Vérifier le contenu d'une OU</span>
+<span class="pr">PS&gt; </span>Get-ADUser -Filter * -SearchBase "OU=Comptabilite,OU=Utilisateurs,OU=TECHNOVA,DC=technova,DC=local"</pre></div>
+      </section>
+
+      <section id="gpo">
+        <h2>Stratégies de groupe (GPO)</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>GPO</th><th>Liée à</th><th>Effet</th></tr></thead>
+          <tbody>
+            <tr><td>Politique de mots de passe</td><td>Domaine</td><td>12 caractères minimum, complexité, verrouillage après 5 essais</td></tr>
+            <tr><td>Lecteur réseau du service</td><td>OU de chaque service</td><td>Lecteur <code>S:</code> monté automatiquement vers le partage du service</td></tr>
+            <tr><td>Fond d'écran de l'entreprise</td><td>Utilisateurs</td><td>Identité visuelle commune</td></tr>
+            <tr><td>Panneau de configuration interdit</td><td>Utilisateurs hors Informatique</td><td>Évite les modifications non maîtrisées</td></tr>
+            <tr><td>Blocage des clés USB</td><td>Ordinateurs</td><td>Réduit les risques de fuite et d'infection</td></tr>
+          </tbody>
+        </table></div>
+        <div class="code"><div class="code-head"><span>Sur un poste client</span><button class="copy-btn" type="button">Copier</button></div><pre><span class="cm"># Forcer l'application puis vérifier les GPO reçues</span>
+<span class="pr">C:\&gt; </span>gpupdate /force
+<span class="pr">C:\&gt; </span>gpresult /r</pre></div>
+      </section>
+
+      <section id="tests">
+        <h2>Tests de validation</h2>
+        <ul>
+          <li>Un utilisateur de la comptabilité voit son lecteur <code>S:</code> et ouvre le dossier Comptabilité.</li>
+          <li>Le même utilisateur reçoit un « accès refusé » sur le dossier Commercial.</li>
+          <li>Tout le monde lit <code>Commun</code>, mais personne ne peut y écrire.</li>
+          <li><code>gpresult /r</code> liste les GPO attendues sur le poste.</li>
+        </ul>
+      </section>
+
+      <section id="bilan">
+        <h2>Bilan</h2>
+        <div class="grid grid-2">
+          <div class="card"><h3>Compétences mobilisées</h3><ul><li>Installation et configuration de Windows Server (AD DS, DNS, DHCP)</li><li>Conception d'une arborescence d'OU</li><li>Gestion des identités et des droits (AGDLP, NTFS)</li><li>Déploiement de configurations par GPO</li></ul></div>
+          <div class="card"><h3>Pistes d'amélioration</h3><ul><li>Second contrôleur de domaine pour la redondance</li><li>Corbeille AD pour restaurer un compte supprimé</li><li>Délégation de la réinitialisation des mots de passe au support</li><li>Création des comptes en masse par script PowerShell et CSV</li></ul></div>
+        </div>
+        <nav class="pager" aria-label="Projets voisins" style="margin-top:28px">
+          <a href="glpi.html"><small>← Projet précédent</small>GLPI : parc et support</a>
+          <a class="next" href="baie-informatique.html"><small>Projet suivant →</small>Installation d'une baie</a>
+        </nav>
+      </section>
+    </article>
+  </div>
+</main>
+<script src="../assets/js/main.js" defer></script>
+</body>
+</html>

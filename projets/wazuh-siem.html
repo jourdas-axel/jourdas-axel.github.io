@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supervision avec Wazuh · Axel Jourdas</title>
+  <meta name="description" content="Mise en place d'un SIEM Wazuh 4.14 tout-en-un sur Debian pour centraliser et analyser les événements de sécurité.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f55d4'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='700' fill='white' text-anchor='middle'%3EAJ%3C/text%3E%3C/svg%3E">
+  <script>document.documentElement.classList.remove('no-js');try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-root="../" data-page="projets">
+<main id="contenu">
+
+  <header class="project-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="../projects.html">Projets</a> / Wazuh</p>
+      <h1>Supervision de la sécurité avec Wazuh</h1>
+      <p class="lead">Déployer un SIEM open source qui collecte les journaux des machines du réseau, les analyse avec des règles de détection et affiche les alertes dans une console web.</p>
+      <div class="tags"><span class="tag tag--securite">Sécurité</span><span class="tag tag--systeme">Système</span><span class="tag">En cours</span><span class="chip">Wazuh 4.14</span><span class="chip">Debian</span><span class="chip">SIEM / XDR</span></div>
+      <dl class="facts">
+        <div><dt>Période</dt><dd>Novembre 2026</dd></div>
+        <div><dt>Cadre</dt><dd>TP · BTS SIO 2</dd></div>
+        <div><dt>Déploiement</dt><dd>Tout-en-un (1 VM)</dd></div>
+        <div><dt>État</dt><dd>Serveur en place, agents à venir</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="container layout-doc">
+    <aside class="toc" aria-label="Sommaire">
+      <p>Sommaire</p>
+      <ol>
+        <li><a href="#contexte">Contexte</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#etapes">Étapes réalisées</a></li>
+        <li><a href="#suite">Suite du projet</a></li>
+        <li><a href="#bilan">Bilan</a></li>
+      </ol>
+    </aside>
+
+    <article class="doc">
+      <section id="contexte">
+        <h2>Contexte et objectif</h2>
+        <p>Sans outil central, une tentative d'intrusion sur un poste passe inaperçue : les traces restent dans les journaux de chaque machine. Un <strong>SIEM</strong> (Security Information and Event Management) rassemble ces journaux, les compare à des règles de détection et lève des alertes.</p>
+        <p>Objectifs du TP :</p>
+        <ul>
+          <li>préparer un serveur Linux dédié à Wazuh ;</li>
+          <li>installer la plateforme <strong>Wazuh 4.14</strong> en mode tout-en-un ;</li>
+          <li>raccorder des machines Windows et Linux grâce à des agents ;</li>
+          <li>vérifier le fonctionnement en provoquant une alerte.</li>
+        </ul>
+      </section>
+
+      <section id="architecture">
+        <h2>Architecture</h2>
+        <p>Cliquez sur un élément pour voir son rôle et les flux réseau qu'il utilise.</p>
+        <div class="diagram" data-interactive data-default="server">
+          <svg viewBox="0 0 760 320" role="img" aria-label="Schéma Wazuh : deux agents envoient leurs événements au serveur Wazuh, consulté via le dashboard">
+            <path class="link" d="M190 90 C 260 90, 260 160, 300 160"/>
+            <path class="link" d="M190 240 C 260 240, 260 160, 300 160"/>
+            <path class="link link--dash" d="M500 160 H570"/>
+            <text class="lbl" x="200" y="80">1514-1515/tcp</text>
+            <text class="lbl" x="200" y="262">1514-1515/tcp</text>
+            <text class="lbl" x="508" y="150">443/tcp</text>
+            <g class="node" data-key="win"><rect x="30" y="60" width="160" height="60" rx="10"/><text x="110" y="86" text-anchor="middle">Agent Windows</text><text class="sub" x="110" y="105" text-anchor="middle">VM cliente</text></g>
+            <g class="node" data-key="lin"><rect x="30" y="210" width="160" height="60" rx="10"/><text x="110" y="236" text-anchor="middle">Agent Linux</text><text class="sub" x="110" y="255" text-anchor="middle">VM cliente</text></g>
+            <g class="node" data-key="server"><rect x="300" y="100" width="200" height="120" rx="12"/><text x="400" y="128" text-anchor="middle" font-weight="700">Serveur « wazuh »</text><text class="sub" x="400" y="150" text-anchor="middle">Debian · 10.2.0.26</text><text class="sub" x="400" y="172" text-anchor="middle">indexer · manager</text><text class="sub" x="400" y="192" text-anchor="middle">dashboard</text></g>
+            <g class="node" data-key="admin"><rect x="570" y="130" width="160" height="60" rx="10"/><text x="650" y="156" text-anchor="middle">Administrateur</text><text class="sub" x="650" y="175" text-anchor="middle">navigateur HTTPS</text></g>
+          </svg>
+          <div class="diagram-panel" aria-live="polite"></div>
+          <template data-for="server"><h4>Serveur Wazuh (tout-en-un)</h4><div class="table-wrap"><table><thead><tr><th>Composant</th><th>Rôle</th></tr></thead><tbody><tr><td>Indexer</td><td>Stocke et indexe les alertes (API sur 9200/tcp, en local)</td></tr><tr><td>Manager</td><td>Reçoit les événements des agents et applique les règles de détection (API REST 55000/tcp)</td></tr><tr><td>Dashboard</td><td>Interface web d'administration et de visualisation (443/tcp)</td></tr></tbody></table></div><p>VM dimensionnée selon la doc Wazuh pour 1 à 25 agents : <strong>4 vCPU, 8 Go de RAM, 50 Go de disque</strong>.</p></template>
+          <template data-for="win"><h4>Agent Windows</h4><p>Service installé sur le poste surveillé. Il lit les journaux d'événements Windows et les envoie chiffrés au manager sur <code>1514/tcp</code>. L'enrôlement initial passe par <code>1515/tcp</code>.</p></template>
+          <template data-for="lin"><h4>Agent Linux</h4><p>Même principe : il surveille <code>auth.log</code>, l'intégrité des fichiers et les processus, puis remonte les événements au manager.</p></template>
+          <template data-for="admin"><h4>Accès administrateur</h4><p>Le dashboard est consulté en HTTPS sur <code>https://&lt;IP_SERVEUR&gt;</code>. En sortie, le serveur doit joindre <code>packages.wazuh.com</code> et <code>cti.wazuh.com</code> (443/tcp) pour l'installation et les flux de vulnérabilités.</p></template>
+        </div>
+      </section>
+
+      <section id="etapes">
+        <h2>Étapes réalisées</h2>
+        <ol class="steps">
+          <li><strong>Créer la VM</strong>4 vCPU, 8 Go de RAM, 50 Go de disque, carte réseau joignable par les autres machines du TP.</li>
+          <li><strong>Installer Debian en IP fixe</strong>Le DHCP n'a pas répondu pendant l'installation. J'ai choisi « Configurer vous-même le réseau » : <code>10.2.0.26</code>, passerelle <code>10.2.0.1</code>, DNS <code>1.1.1.1</code>. Pour un serveur que des agents doivent joindre, une IP fixe est de toute façon préférable.</li>
+          <li><strong>Installation minimale</strong>Pas d'environnement graphique pour économiser les ressources. Seuls le serveur SSH et les utilitaires usuels sont installés. Le compte root est laissé sans mot de passe pour passer par <code>sudo</code>.</li>
+          <li><strong>Préparer le système puis lancer l'installation de Wazuh</strong>Le script officiel installe et configure les trois composants.</li>
+        </ol>
+        <figure class="shot"><img src="../assets/img/projets/wazuh/01-debian-reseau-manuel.jpg" alt="Installateur Debian : choix de configurer le réseau manuellement" loading="lazy"><figcaption>Installateur Debian : passage en configuration réseau manuelle après l'échec du DHCP</figcaption></figure>
+        <div class="code"><div class="code-head"><span>serveur wazuh · bash</span><button class="copy-btn" type="button">Copier</button></div><pre><span class="cm"># Vérifier le réseau après le premier démarrage</span>
+<span class="pr">$ </span>ip a
+<span class="pr">$ </span>ping -c 3 deb.debian.org
+
+<span class="cm"># Mettre le système à jour et installer curl</span>
+<span class="pr">$ </span>sudo apt update &amp;&amp; sudo apt upgrade -y
+<span class="pr">$ </span>sudo apt install -y curl
+
+<span class="cm"># Installer Wazuh 4.14 en mode tout-en-un (-a)</span>
+<span class="pr">$ </span>curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh
+<span class="pr">$ </span>sudo bash ./wazuh-install.sh -a</pre></div>
+        <div class="callout"><strong>Bon réflexe sécurité</strong><p>Le script affiche le mot de passe <code>admin</code> à la fin. Tous les mots de passe générés sont aussi gardés dans l'archive <code>wazuh-install-files.tar</code>. Il faut la stocker en lieu sûr et ne jamais la laisser traîner sur le serveur.</p></div>
+      </section>
+
+      <section id="suite">
+        <h2>Suite du projet</h2>
+        <p>Les prochaines étapes, prévues dans le TP :</p>
+        <ul>
+          <li>déployer l'agent sur une VM Windows et une VM Linux, puis vérifier qu'elles apparaissent « actives » dans le dashboard ;</li>
+          <li>provoquer plusieurs connexions SSH ratées pour générer une alerte de type brute force ;</li>
+          <li>bloquer les mises à jour automatiques des paquets Wazuh, pour garder le manager et les agents dans la même version.</li>
+        </ul>
+        <div class="callout callout--warn"><strong>Projet en cours</strong><p>Cette page sera complétée avec les captures du dashboard et de la première alerte.</p></div>
+      </section>
+
+      <section id="bilan">
+        <h2>Bilan</h2>
+        <div class="grid grid-2">
+          <div class="card"><h3>Compétences mobilisées</h3><ul><li>Dimensionnement d'un serveur selon la documentation éditeur</li><li>Installation Debian minimale en IP fixe</li><li>Identification des flux réseau à ouvrir</li><li>Compréhension de l'architecture d'un SIEM</li></ul></div>
+          <div class="card"><h3>Lien avec mes autres projets</h3><p>Wazuh complète le <a href="durcissement-linux.html">durcissement Linux</a> : durcir réduit les attaques possibles, superviser permet de voir celles qui sont tentées. Ma <a href="../veille.html">veille sur l'IA en cybersécurité</a> part aussi de ce sujet.</p></div>
+        </div>
+        <nav class="pager" aria-label="Projets voisins" style="margin-top:28px">
+          <a href="pfsense-vpn.html"><small>← Projet précédent</small>pfSense et VPN</a>
+          <a class="next" href="durcissement-linux.html"><small>Projet suivant →</small>Durcissement Linux</a>
+        </nav>
+      </section>
+    </article>
+  </div>
+</main>
+<script src="../assets/js/main.js" defer></script>
+</body>
+</html>

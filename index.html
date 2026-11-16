@@ -1,86 +1,140 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="no-js">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio - Axel Jourdas | BTS SIO</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Axel Jourdas · Portfolio BTS SIO SISR</title>
+  <meta name="description" content="Portfolio d'Axel Jourdas, étudiant en BTS SIO option SISR en alternance : pare-feu pfSense, VPN, supervision Wazuh, durcissement Linux et Windows, Active Directory, GLPI.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f55d4'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='700' fill='white' text-anchor='middle'%3EAJ%3C/text%3E%3C/svg%3E">
+  <script>document.documentElement.classList.remove('no-js');try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body data-root="" data-page="accueil">
+<main id="contenu">
 
-    <header>
-        <div class="logo">Axel J.</div>
-        <nav>
-            <ul>
-                  <li><a href="index.html">Accueil</a></li>
-                <li><a href="about.html">A propos de moi</a></li>
-                <li><a href="projects.html">Projets</a></li>
-                <li><a href="bts_sio.html">BTS SIO</a></li>
-                <li><a href="documentation.html">Documentation</a></li>
-                <li><a href="veille.html">Veille Technologique</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <section id="hero">
-        <div class="hero-content">
-            <p class="subtitle">Bonjour, je suis</p>
-            <h1>Axel Jourdas</h1>
-            <h2>Étudiant en BTS SIO & Passionné de Cybersécurité</h2>
-            <p class="description">
-                Futur administrateur système et réseau, je me spécialise dans la sécurisation d'infrastructures et l'analyse de vulnérabilités.
-            </p>
-            <div class="hero-buttons">
-                <a href="CV DIGITAL SCHOOL.pdf" class="btn btn-primary" target="_blank">
-                    <i class="fas fa-download"></i> Télécharger mon CV
-                </a>
-                <a href="projects.html" class="btn btn-secondary">Voir mes projets</a>
-            </div>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="reveal">
+        <span class="status"><span class="dot"></span>BTS SIO option SISR · 2ᵉ année · en alternance</span>
+        <h1>Bonjour, je suis Axel.<br><span class="accent">Futur administrateur systèmes &amp; réseaux.</span></h1>
+        <p class="lead">J'installe, je configure et je sécurise des infrastructures : pare-feu et VPN, supervision de la sécurité, durcissement de serveurs et de postes, annuaire Active Directory et support utilisateur.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="projects.html">Voir mes projets
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="btn btn-ghost" href="CV%20DIGITAL%20SCHOOL.pdf" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Télécharger mon CV</a>
         </div>
-        <div class="hero-image">
-            </div>
-    </section>
+      </div>
+      <div class="hero-card reveal" aria-hidden="true">
+        <div class="bar"><span></span><span></span><span></span></div>
+<pre><span class="k">axel@lab</span>:~$ whoami
+Axel Jourdas · BTS SIO SISR
 
-    <section id="features">
-        <div class="container">
-            <h3>Ce que je fais</h3>
-            <div class="cards-grid">
-                <div class="card">
-                    <i class="fas fa-server"></i>
-                    <h4>Systèmes & Réseaux</h4>
-                    <p>Administration Linux/Windows et gestion de protocoles réseaux.</p>
-                </div>
-                <div class="card">
-                    <i class="fas fa-shield-alt"></i>
-                    <h4>Cybersécurité</h4>
-                    <p>Analyse de vulnérabilités, CTF (TryHackMe) et sécurité offensive.</p>
-                </div>
-                <div class="card">
-                    <i class="fas fa-laptop-code"></i>
-                    <h4>Support & Dev</h4>
-                    <p>Gestion de parc (GLPI), scripting Bash et développement Web.</p>
-                </div>
-            </div>
+<span class="k">axel@lab</span>:~$ cat stack.txt
+<span class="c">réseau  </span> pfSense · VLAN · OpenVPN
+<span class="c">système </span> Debian · Windows Server · AD
+<span class="c">sécurité</span> Wazuh · UFW · AppArmor
+<span class="c">support </span> GLPI · parc · tickets
+
+<span class="k">axel@lab</span>:~$ systemctl status motivation
+<span class="ok">● active (running)</span></pre>
+      </div>
+    </div>
+    <div class="container">
+      <div class="stats reveal">
+        <div class="stat"><strong>9</strong><span>projets documentés</span></div>
+        <div class="stat"><strong>170+</strong><span>captures de preuve</span></div>
+        <div class="stat"><strong>3</strong><span>systèmes administrés : Debian, Windows, pfSense</span></div>
+        <div class="stat"><strong>4</strong><span>domaines : réseau, système, sécurité, support</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Projets phares</span>
+        <h2>Ce que j'ai construit récemment</h2>
+        <p class="lead">Chaque projet a sa page : contexte, étapes, commandes, problèmes rencontrés et captures.</p>
+      </div>
+      <div class="grid grid-3">
+        <a class="card project-card reveal" href="projets/pfsense-vpn.html">
+          <div class="thumb"><img src="assets/img/projets/pfsense/08-regles-dmz.jpg" alt="Règles de pare-feu de la DMZ dans pfSense" loading="lazy"></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--reseau">Réseau</span><span class="tag tag--securite">Sécurité</span></div>
+            <h3>Pare-feu pfSense et VPN nomade</h3>
+            <p>pfSense sur Proxmox, segmentation LAN / DMZ / Invités en VLAN et serveur OpenVPN d'accès distant.</p>
+            <div class="meta"><span>Oct. 2026</span><span class="more">Voir le projet →</span></div>
+          </div>
+        </a>
+        <a class="card project-card reveal" href="projets/glpi.html">
+          <div class="thumb"><img src="assets/img/projets/glpi/03-tableau-de-bord.jpg" alt="Tableau de bord GLPI" loading="lazy"></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--support">Support</span><span class="tag tag--systeme">Système</span></div>
+            <h3>GLPI : parc et centre de support</h3>
+            <p>Déploiement de GLPI, inventaire, profils et traitement de tickets de bout en bout.</p>
+            <div class="meta"><span>2025 – 2026</span><span class="more">Voir le projet →</span></div>
+          </div>
+        </a>
+        <a class="card project-card reveal" href="projets/durcissement-linux.html">
+          <div class="thumb"><img src="assets/img/projets/durcissement-linux/07-ports-avant.png" alt="Ports en écoute avant durcissement (ss -tulpn)" loading="lazy"></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--securite">Sécurité</span><span class="tag tag--systeme">Système</span></div>
+            <h3>Durcissement d'un serveur Debian</h3>
+            <p>SSH par clé, pare-feu UFW, Fail2ban, AppArmor et audit Lynis avant / après.</p>
+            <div class="meta"><span>Sept. 2026</span><span class="more">Voir le projet →</span></div>
+          </div>
+        </a>
+      </div>
+      <p style="margin-top:28px"><a class="btn btn-ghost" href="projects.html">Tous les projets (9) →</a></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Ce que je fais</span>
+        <h2>Quatre domaines, une même logique</h2>
+        <p class="lead">Comprendre, configurer, vérifier, documenter. Chaque compétence ci-dessous est prouvée par un projet.</p>
+      </div>
+      <div class="grid grid-4">
+        <div class="card reveal">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="6" rx="1"/><rect x="14" y="15" width="7" height="6" rx="1"/><rect x="3" y="15" width="7" height="6" rx="1"/><path d="M6.5 9v6M10 18h4M17.5 15v-3h-11"/></svg></div>
+          <h3>Réseau</h3>
+          <p class="muted">Adressage, VLAN, DHCP, DNS, routage et pare-feu. Topologies Cisco sur Packet Tracer.</p>
         </div>
-    </section>
-
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2025 Axel Jourdas. Tous droits réservés.</p>
-            <div class="socials">
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-                <a href="#"><i class="fab fa-github"></i></a>
-            </div>
+        <div class="card reveal">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
+          <h3>Système</h3>
+          <p class="muted">Debian, Windows Server et Active Directory, virtualisation sous Proxmox, scripts PowerShell et Bash.</p>
         </div>
-    </footer>
+        <div class="card reveal">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3>Cybersécurité</h3>
+          <p class="muted">Durcissement selon les guides CIS et ANSSI, supervision avec Wazuh, CTF et entraînement sur TryHackMe.</p>
+        </div>
+        <div class="card reveal">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="1.5"/><rect x="17" y="14" width="5" height="6" rx="1.5"/></svg></div>
+          <h3>Support</h3>
+          <p class="muted">Gestion de parc et de tickets avec GLPI, diagnostic, relation avec les utilisateurs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <script>
-        window.addEventListener("scroll", function() {
-            var header = document.querySelector("header");
-            header.classList.toggle("scrolled", window.scrollY > 50);
-        });
-    </script>
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="cta reveal">
+        <div>
+          <h2>Un stage, une alternance, une question ?</h2>
+          <p>Je réponds rapidement par e-mail ou sur LinkedIn.</p>
+        </div>
+        <a class="btn btn-primary" href="contact.html">Me contacter</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+<script src="assets/js/main.js" defer></script>
 </body>
 </html>

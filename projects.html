@@ -1,54 +1,130 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="no-js">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Projets - Axel Jourdas</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projets · Axel Jourdas</title>
+  <meta name="description" content="Projets d'Axel Jourdas en BTS SIO SISR : pfSense et VPN, Wazuh, durcissement Linux et Windows, GLPI, Active Directory, baie informatique, CTF, TryHackMe.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f55d4'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='700' fill='white' text-anchor='middle'%3EAJ%3C/text%3E%3C/svg%3E">
+  <script>document.documentElement.classList.remove('no-js');try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
-    <header>
-        <h1>Mes Projets & Expériences</h1>
-        <nav>
-            <ul>
-              <li><a href="index.html">Accueil</a></li>
-                <li><a href="about.html">A propos de moi</a></li>
-                <li><a href="projects.html">Projets</a></li>
-                <li><a href="bts_sio.html">BTS SIO</a></li>
-                <li><a href="documentation.html">Documentation</a></li>
-                <li><a href="veille.html">Veille Technologique</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+<body data-root="" data-page="projets">
+<main id="contenu">
 
-    <section>
-        <h2>Projets Réalisés</h2>
+  <header class="page-head">
+    <div class="container">
+      <span class="eyebrow">Projets</span>
+      <h1>Mes projets et réalisations</h1>
+      <p class="lead">Des TP d'infrastructure documentés, avec à chaque fois le contexte, les étapes, les commandes, les problèmes rencontrés et des captures. Filtrez par domaine :</p>
+    </div>
+  </header>
 
-        <article>
-            <h3>CYCOM Hacking Conference & CTF</h3>
-            <p>Participation à un événement annuel dédié à la cybersécurité offensive. Participation au challenge "Capture The Flag" (CTF) permettant de tester des compétences en intrusion et analyse de vulnérabilités en temps réel.</p>
-            </article>
+  <section style="padding-bottom:72px">
+    <div class="container">
+      <div class="filters" role="group" aria-label="Filtrer les projets">
+        <button class="filter-btn active" type="button" data-filter="tous" aria-pressed="true">Tous</button>
+        <button class="filter-btn" type="button" data-filter="reseau" aria-pressed="false">Réseau</button>
+        <button class="filter-btn" type="button" data-filter="securite" aria-pressed="false">Sécurité</button>
+        <button class="filter-btn" type="button" data-filter="systeme" aria-pressed="false">Système</button>
+        <button class="filter-btn" type="button" data-filter="support" aria-pressed="false">Support</button>
+      </div>
 
-        <article>
-            <h3>Stage en Entreprise - SPOOM</h3>
-            <p>Lors de ce stage, j'ai pu réaliser des missions de support technique : réponse aux incidents clients, diagnostic de dysfonctionnements et démarches commerciales pour présenter nos services.</p>
-            </article>
+      <div class="grid grid-3">
+        <a class="card project-card reveal" href="projets/pfsense-vpn.html" data-cat="reseau securite">
+          <div class="thumb"><img src="assets/img/projets/pfsense/08-regles-dmz.jpg" alt="Règles de pare-feu de la DMZ" loading="lazy"></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--reseau">Réseau</span><span class="tag tag--securite">Sécurité</span></div>
+            <h3>Pare-feu pfSense et VPN nomade</h3>
+            <p>pfSense sur Proxmox, zones LAN / DMZ / Invités en VLAN, règles de filtrage et OpenVPN.</p>
+            <div class="meta"><span>Oct. 2026</span><span class="more">Voir →</span></div>
+          </div>
+        </a>
 
-        <article>
-            <h3>Auto-formation Cybersécurité (TryHackMe)</h3>
-            <p>Parcours d'apprentissage autodidacte couvrant l'analyse de vulnérabilités, la protection des réseaux et la gestion des incidents à travers des scénarios interactifs réalistes.</p>
-             <a href="https://tryhackme.com" target="_blank" class="btn">Voir la plateforme</a>
-        </article>
+        <a class="card project-card reveal" href="projets/wazuh-siem.html" data-cat="securite systeme">
+          <div class="thumb thumb--art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M8 12h2l1.5-3 2 6 1.5-3h1"/></svg></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--securite">Sécurité</span><span class="tag tag--systeme">Système</span><span class="tag">En cours</span></div>
+            <h3>Supervision avec Wazuh</h3>
+            <p>SIEM Wazuh 4.14 tout-en-un sur Debian pour centraliser les événements de sécurité.</p>
+            <div class="meta"><span>Nov. 2026</span><span class="more">Voir →</span></div>
+          </div>
+        </a>
 
-        <article>
-            <h3>Installation d'une Baie Informatique</h3>
-            <p>Projet scolaire consistant à mettre en place une armoire de serveurs, configurer les équipements réseaux (switchs, routeurs) et gérer les comptes utilisateurs via Active Directory.</p>
-        </article>
-    </section>
+        <a class="card project-card reveal" href="projets/durcissement-linux.html" data-cat="securite systeme">
+          <div class="thumb"><img src="assets/img/projets/durcissement-linux/07-ports-avant.png" alt="Ports en écoute avant durcissement" loading="lazy"></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--securite">Sécurité</span><span class="tag tag--systeme">Système</span></div>
+            <h3>Durcissement d'un serveur Debian</h3>
+            <p>SSH par clé, UFW, Fail2ban, AppArmor et audit Lynis. Avec un terminal animé.</p>
+            <div class="meta"><span>Sept. 2026</span><span class="more">Voir →</span></div>
+          </div>
+        </a>
 
-    <footer>
-        <p>&copy; 2025 Axel Jourdas. Tous droits réservés.</p>
-    </footer>
+        <a class="card project-card reveal" href="projets/durcissement-windows.html" data-cat="securite systeme">
+          <div class="thumb"><img src="assets/img/projets/durcissement-windows/03-comptes-apres.jpg" alt="Comptes Windows après durcissement" loading="lazy"></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--securite">Sécurité</span><span class="tag tag--systeme">Système</span></div>
+            <h3>Durcissement d'un poste Windows</h3>
+            <p>13 paramètres durcis selon CIS L1 et l'ANSSI, avec un tableau avant / après interactif.</p>
+            <div class="meta"><span>Sept. 2026</span><span class="more">Voir →</span></div>
+          </div>
+        </a>
+
+        <a class="card project-card reveal" href="projets/glpi.html" data-cat="support systeme">
+          <div class="thumb"><img src="assets/img/projets/glpi/03-tableau-de-bord.jpg" alt="Tableau de bord GLPI" loading="lazy"></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--support">Support</span><span class="tag tag--systeme">Système</span></div>
+            <h3>GLPI : parc et centre de support</h3>
+            <p>Déploiement, inventaire, profils, catégories et cycle de vie complet des tickets.</p>
+            <div class="meta"><span>2025 – 2026</span><span class="more">Voir →</span></div>
+          </div>
+        </a>
+
+        <a class="card project-card reveal" href="projets/active-directory.html" data-cat="systeme reseau">
+          <div class="thumb thumb--art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="4.5" rx="1"/><rect x="2.5" y="17" width="6" height="4.5" rx="1"/><rect x="9" y="17" width="6" height="4.5" rx="1"/><rect x="15.5" y="17" width="6" height="4.5" rx="1"/><path d="M12 7v5M5.5 17v-2.5h13V17M12 12v5"/></svg></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--systeme">Système</span><span class="tag tag--reseau">Réseau</span></div>
+            <h3>Active Directory « TechNova »</h3>
+            <p>AD DS, DNS, DHCP, OU par service, méthode AGDLP et GPO pour une PME de 30 salariés.</p>
+            <div class="meta"><span>Nov. 2026</span><span class="more">Voir →</span></div>
+          </div>
+        </a>
+
+        <a class="card project-card reveal" href="projets/baie-informatique.html" data-cat="reseau systeme">
+          <div class="thumb thumb--art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="2.5" width="16" height="19" rx="1.5"/><path d="M7 6.5h10M7 10h10M7 13.5h10M7 17h10"/><circle cx="16" cy="6.5" r=".3"/></svg></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--reseau">Réseau</span><span class="tag tag--systeme">Système</span></div>
+            <h3>Installation d'une baie informatique</h3>
+            <p>Projet de groupe : armoire, câblage, switchs, routeurs et comptes Active Directory.</p>
+            <div class="meta"><span>BTS SIO</span><span class="more">Voir →</span></div>
+          </div>
+        </a>
+
+        <a class="card project-card reveal" href="projets/cycom-ctf.html" data-cat="securite">
+          <div class="thumb thumb--art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--securite">Sécurité</span></div>
+            <h3>CYCOM : Hacking Conference et CTF</h3>
+            <p>Challenge « Capture The Flag » de cybersécurité offensive, en équipe et en temps limité.</p>
+            <div class="meta"><span>Événement</span><span class="more">Voir →</span></div>
+          </div>
+        </a>
+
+        <a class="card project-card reveal" href="projets/tryhackme.html" data-cat="securite">
+          <div class="thumb thumb--art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/></svg></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--securite">Sécurité</span></div>
+            <h3>Auto-formation TryHackMe</h3>
+            <p>Vulnérabilités, protection des réseaux et gestion des incidents, en autonomie.</p>
+            <div class="meta"><span>En continu</span><span class="more">Voir →</span></div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+<script src="assets/js/main.js" defer></script>
 </body>
 </html>

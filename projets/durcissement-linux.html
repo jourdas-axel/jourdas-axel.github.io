@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Durcissement Debian · Axel Jourdas</title>
+  <meta name="description" content="Durcissement d'un serveur Debian : SSH par clé ED25519, UFW, Fail2ban, désactivation des services inutiles, AppArmor et audit Lynis.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f55d4'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='700' fill='white' text-anchor='middle'%3EAJ%3C/text%3E%3C/svg%3E">
+  <script>document.documentElement.classList.remove('no-js');try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-root="../" data-page="projets">
+<main id="contenu">
+
+  <header class="project-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="../projects.html">Projets</a> / Durcissement Linux</p>
+      <h1>Durcissement d'un serveur Debian</h1>
+      <p class="lead">Réduire la surface d'attaque d'une machine Debian : accès SSH par clé uniquement, pare-feu restrictif, protection contre le brute force, arrêt des services inutiles et confinement des applications.</p>
+      <div class="tags"><span class="tag tag--securite">Sécurité</span><span class="tag tag--systeme">Système</span><span class="chip">Debian 13</span><span class="chip">OpenSSH</span><span class="chip">UFW</span><span class="chip">Fail2ban</span><span class="chip">AppArmor</span><span class="chip">Lynis</span></div>
+      <dl class="facts">
+        <div><dt>Période</dt><dd>Septembre 2026</dd></div>
+        <div><dt>Cadre</dt><dd>TP · BTS SIO 2</dd></div>
+        <div><dt>Mesures</dt><dd>7 axes de durcissement</dd></div>
+        <div><dt>Preuves</dt><dd>32 captures</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="container layout-doc">
+    <aside class="toc" aria-label="Sommaire">
+      <p>Sommaire</p>
+      <ol>
+        <li><a href="#contexte">Contexte</a></li>
+        <li><a href="#demo">Démo terminal</a></li>
+        <li><a href="#ssh">SSH</a></li>
+        <li><a href="#pare-feu">Pare-feu et Fail2ban</a></li>
+        <li><a href="#services">Services et AppArmor</a></li>
+        <li><a href="#synthese">Synthèse</a></li>
+        <li><a href="#bilan">Bilan</a></li>
+      </ol>
+    </aside>
+
+    <article class="doc">
+      <section id="contexte">
+        <h2>Contexte et méthode</h2>
+        <p>Une Debian fraîchement installée reste trop ouverte pour un serveur : connexion SSH par mot de passe, services réseau inutiles, aucun pare-feu. J'ai suivi une démarche en trois temps :</p>
+        <ol class="steps">
+          <li><strong>Mesurer</strong>Mise à jour du système et audit initial avec <code>Lynis 3.1.4</code>.</li>
+          <li><strong>Durcir</strong>SSH, pare-feu, Fail2ban, services, AppArmor.</li>
+          <li><strong>Vérifier</strong>Chaque mesure est contrôlée par une commande, puis un second audit Lynis compare l'avant et l'après.</li>
+        </ol>
+      </section>
+
+      <section id="demo">
+        <h2>Démo : le durcissement en accéléré</h2>
+        <p>Les commandes ci-dessous rejouent le TP dans l'ordre. Les sorties sont résumées à partir de mes captures.</p>
+        <div class="terminal" data-replay="replay-linux" data-prompt="localadm@debian:~$ ">
+          <div class="terminal-head"><div class="dots"><span></span><span></span><span></span></div><span class="title">localadm@debian — bash</span>
+            <div class="controls"><button class="copy-btn" type="button" data-act="play">Lecture</button><button class="copy-btn" type="button" data-act="skip">Tout afficher</button><button class="copy-btn" type="button" data-act="reset">Effacer</button></div></div>
+          <div class="terminal-body" aria-live="off"></div>
+        </div>
+        <script type="application/json" id="replay-linux">[
+          {"cmd": "sudo apt update && sudo apt install lynis", "out": ["Installation de : lynis menu"]},
+          {"cmd": "sudo lynis audit system", "note": "audit initial : état des lieux avant durcissement"},
+          {"cmd": "ssh-keygen -t ed25519 -N \"\" -f ~/.ssh/id_ed25519", "out": ["Your public key has been saved in /home/localadm/.ssh/id_ed25519.pub"]},
+          {"cmd": "cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"},
+          {"cmd": "sudo groupadd sshusers && sudo usermod -aG sshusers localadm"},
+          {"cmd": "sudo sshd -T | grep -iE 'permitrootlogin|passwordauthentication'", "out": ["permitrootlogin no", "passwordauthentication no"]},
+          {"cmd": "sudo apt install fail2ban && sudo systemctl restart fail2ban"},
+          {"cmd": "sudo ufw default deny incoming", "out": ["Default incoming policy changed to 'deny'"]},
+          {"cmd": "sudo ufw allow ssh && sudo ufw enable", "out": ["Rules updated", "Firewall is active and enabled on system startup"]},
+          {"cmd": "sudo systemctl disable --now avahi-daemon cups", "note": "services de découverte réseau et d'impression inutiles sur un serveur"},
+          {"cmd": "sudo ss -tulpn", "out": ["tcp  LISTEN  0.0.0.0:22   users:((\"sshd\"))", "tcp  LISTEN  [::]:22      users:((\"sshd\"))"], "note": "seul sshd reste en écoute"},
+          {"cmd": "sudo aa-enforce /etc/apparmor.d/* && sudo aa-status", "out": ["121 profiles are loaded.", "121 profiles are in enforce mode."]},
+          {"cmd": "sudo lynis audit system", "note": "audit final : comparaison du hardening index avec l'audit initial"}
+        ]</script>
+      </section>
+
+      <section id="ssh">
+        <h2>SSH : clé uniquement, root interdit</h2>
+        <p>La clé <strong>ED25519</strong> remplace le mot de passe : elle est plus robuste et plus rapide que RSA. L'accès est ensuite limité à un groupe dédié, <code>sshusers</code>.</p>
+        <div class="code"><div class="code-head"><span>/etc/ssh/sshd_config (extrait)</span><button class="copy-btn" type="button">Copier</button></div><pre><span class="cm"># Seuls les membres du groupe sshusers peuvent se connecter</span>
+AllowGroups sshusers
+<span class="cm"># Limiter les essais et le temps pour s'authentifier</span>
+MaxAuthTries 3
+LoginGraceTime 30
+<span class="cm"># Pas de connexion root directe, pas de mot de passe</span>
+PermitRootLogin no
+PasswordAuthentication no</pre></div>
+        <div class="callout callout--warn"><strong>Piège évité</strong><p>Un premier contrôle avec <code>sshd -T</code> montrait que <code>PermitRootLogin</code> et <code>PasswordAuthentication</code> n'étaient pas encore désactivés. Modifier le fichier ne suffit pas : il faut vérifier la configuration effectivement appliquée par le service.</p></div>
+        <div class="gallery">
+          <figure><img src="../assets/img/projets/durcissement-linux/02-ssh-keygen-ed25519.png" alt="Génération d'une clé SSH ED25519" loading="lazy"><figcaption>Génération de la paire de clés ED25519</figcaption></figure>
+          <figure><img src="../assets/img/projets/durcissement-linux/03-sshd-config.png" alt="Vérification des paramètres sshd par grep" loading="lazy"><figcaption>Paramètres AllowGroups, MaxAuthTries, LoginGraceTime</figcaption></figure>
+          <figure><img src="../assets/img/projets/durcissement-linux/04-sshd-verification.png" alt="sshd -T confirme permitrootlogin no et passwordauthentication no" loading="lazy"><figcaption>sshd -T : configuration appliquée</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="pare-feu">
+        <h2>Pare-feu UFW et Fail2ban</h2>
+        <p>Politique <strong>« deny by default »</strong> : tout ce qui entre est refusé, sauf SSH, ouvert explicitement pour garder l'accès à distance. C'est le principe du moindre privilège appliqué au réseau.</p>
+        <p><strong>Fail2ban</strong> surveille les journaux d'authentification et bannit temporairement les adresses IP qui enchaînent les échecs de connexion.</p>
+        <div class="gallery">
+          <figure><img src="../assets/img/projets/durcissement-linux/05-ufw-deny.png" alt="ufw default deny incoming" loading="lazy"><figcaption>Politique entrante : deny</figcaption></figure>
+          <figure><img src="../assets/img/projets/durcissement-linux/06-ufw-enable.png" alt="ufw enable" loading="lazy"><figcaption>Pare-feu actif au démarrage</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="services">
+        <h2>Services inutiles et AppArmor</h2>
+        <p><code>ss -tulpn</code> listait <code>avahi-daemon</code> (découverte mDNS) et <code>cups</code> (impression) en écoute. Ces deux services n'ont rien à faire sur un serveur : ils sont arrêtés et désactivés. Ensuite, seul <code>sshd</code> écoute encore.</p>
+        <div class="gallery">
+          <figure><img src="../assets/img/projets/durcissement-linux/07-ports-avant.png" alt="Ports en écoute avant : avahi, cups et sshd" loading="lazy"><figcaption>Avant : avahi, cups, sshd</figcaption></figure>
+          <figure><img src="../assets/img/projets/durcissement-linux/08-ports-apres.png" alt="Ports en écoute après : seulement sshd" loading="lazy"><figcaption>Après : seulement sshd (22)</figcaption></figure>
+          <figure><img src="../assets/img/projets/durcissement-linux/09-apparmor-status.png" alt="aa-status : 121 profils en mode enforce" loading="lazy"><figcaption>AppArmor : 121 profils en mode enforce</figcaption></figure>
+          <figure><img src="../assets/img/projets/durcissement-linux/01-lynis-audit.png" alt="Lancement de l'audit Lynis" loading="lazy"><figcaption>Audit Lynis 3.1.4</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="synthese">
+        <h2>Synthèse des mesures</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Axe</th><th>Mesure appliquée</th><th>Vérification</th></tr></thead>
+          <tbody>
+            <tr><td>Mises à jour</td><td>Système à jour</td><td><code>apt update</code></td></tr>
+            <tr><td>Audit</td><td>Lynis avant / après</td><td><code>lynis audit system</code></td></tr>
+            <tr><td>SSH</td><td>Clé ED25519 seule, groupe <code>sshusers</code>, root et mots de passe interdits</td><td><code>sshd -T</code></td></tr>
+            <tr><td>Brute force</td><td>Fail2ban actif</td><td><code>systemctl status fail2ban</code></td></tr>
+            <tr><td>Pare-feu</td><td>UFW, deny par défaut, seul SSH entrant</td><td><code>ufw status verbose</code></td></tr>
+            <tr><td>Services</td><td>avahi-daemon et cups désactivés</td><td><code>ss -tulpn</code></td></tr>
+            <tr><td>Confinement</td><td>AppArmor : 121 profils en enforce</td><td><code>aa-status</code></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="bilan">
+        <h2>Bilan</h2>
+        <div class="grid grid-2">
+          <div class="card"><h3>Compétences mobilisées</h3><ul><li>Administration Linux en ligne de commande</li><li>Sécurisation des accès distants (SSH, clés)</li><li>Filtrage réseau et principe du moindre privilège</li><li>Audit et preuve par la mesure</li></ul></div>
+          <div class="card"><h3>Ce que j'en retiens</h3><ul><li>Toujours garder un accès (ici SSH autorisé <em>avant</em> d'activer le pare-feu).</li><li>Vérifier la configuration réellement appliquée, pas seulement le fichier.</li><li>Moins de services en écoute, c'est moins de portes d'entrée.</li></ul></div>
+        </div>
+        <nav class="pager" aria-label="Projets voisins" style="margin-top:28px">
+          <a href="wazuh-siem.html"><small>← Projet précédent</small>Supervision avec Wazuh</a>
+          <a class="next" href="durcissement-windows.html"><small>Projet suivant →</small>Durcissement Windows</a>
+        </nav>
+      </section>
+    </article>
+  </div>
+</main>
+<script src="../assets/js/main.js" defer></script>
+</body>
+</html>

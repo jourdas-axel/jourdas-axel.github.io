@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pare-feu pfSense et VPN · Axel Jourdas</title>
+  <meta name="description" content="Installation de pfSense CE sur Proxmox, segmentation LAN / DMZ / Invités en VLAN, règles de pare-feu et serveur OpenVPN d'accès distant.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f55d4'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='700' fill='white' text-anchor='middle'%3EAJ%3C/text%3E%3C/svg%3E">
+  <script>document.documentElement.classList.remove('no-js');try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-root="../" data-page="projets">
+<main id="contenu">
+
+  <header class="project-hero">
+    <div class="container">
+      <p class="breadcrumb"><a href="../projects.html">Projets</a> / pfSense et VPN</p>
+      <h1>Pare-feu pfSense et VPN nomade</h1>
+      <p class="lead">Installer un pare-feu pfSense dans une machine virtuelle Proxmox, découper le réseau en trois zones isolées et donner un accès distant sécurisé par OpenVPN.</p>
+      <div class="tags"><span class="tag tag--reseau">Réseau</span><span class="tag tag--securite">Sécurité</span><span class="chip">pfSense CE 2.9</span><span class="chip">Proxmox VE 9.2</span><span class="chip">VLAN</span><span class="chip">OpenVPN</span><span class="chip">PKI</span></div>
+      <dl class="facts">
+        <div><dt>Période</dt><dd>Octobre 2026</dd></div>
+        <div><dt>Cadre</dt><dd>TP · BTS SIO 2</dd></div>
+        <div><dt>Environnement</dt><dd>Lab Proxmox de l'école</dd></div>
+        <div><dt>Preuves</dt><dd>106 captures</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="container layout-doc">
+    <aside class="toc" aria-label="Sommaire">
+      <p>Sommaire</p>
+      <ol>
+        <li><a href="#contexte">Contexte</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#pare-feu">Règles de pare-feu</a></li>
+        <li><a href="#vpn">Serveur VPN</a></li>
+        <li><a href="#problemes">Problèmes et solutions</a></li>
+        <li><a href="#captures">Captures</a></li>
+        <li><a href="#bilan">Bilan</a></li>
+      </ol>
+    </aside>
+
+    <article class="doc">
+      <section id="contexte">
+        <h2>Contexte et objectif</h2>
+        <p>Une organisation a besoin de séparer ses réseaux : les postes internes (LAN), les serveurs exposés (DMZ) et le Wi-Fi des visiteurs (Invités) ne doivent pas pouvoir communiquer entre eux. Les salariés en déplacement doivent aussi pouvoir joindre le réseau interne de façon chiffrée.</p>
+        <p>J'ai déployé <strong>pfSense CE 2.9.0</strong> dans la VM 101 du nœud Proxmox <code>pve1</code>, puis je l'ai configuré depuis une VM cliente Debian 13 (VM 104) par l'interface web.</p>
+        <figure class="shot"><img src="../assets/img/projets/pfsense/13-lab-proxmox.jpg" alt="Interface Proxmox avec les VM du lab : TrueNAS, pfSense, GLPI, Windows Server, Debian et Zabbix" loading="lazy"><figcaption>Le lab Proxmox : pfSense (101) et la VM cliente Debian (104) d'où l'interface web est administrée.</figcaption></figure>
+      </section>
+
+      <section id="architecture">
+        <h2>Architecture réseau</h2>
+        <p>Cliquez sur une zone pour voir son adressage et ses règles de filtrage.</p>
+        <div class="diagram" data-interactive data-default="pfsense">
+          <svg viewBox="0 0 760 360" role="img" aria-label="Schéma réseau : le pfSense relie le réseau de l'école (WAN) aux zones LAN, DMZ, Invités et au tunnel VPN">
+            <path class="link" d="M380 70 V130"/>
+            <path class="link" d="M380 190 V230 M120 230 H640 M120 230 V262 M300 230 V262 M480 230 V262"/>
+            <path class="link link--dash" d="M640 230 V262"/>
+            <text class="lbl" x="390" y="105">WAN · 10.2.0.8/24</text>
+            <text class="lbl" x="130" y="222">vtnet1</text>
+            <text class="lbl" x="310" y="222">VLAN 20</text>
+            <text class="lbl" x="490" y="222">VLAN 30</text>
+            <text class="lbl" x="650" y="222">tunnel</text>
+            <g class="node" data-key="wan"><rect x="270" y="14" width="220" height="56" rx="10"/><text x="380" y="38" text-anchor="middle">Réseau de l'école / Internet</text><text class="sub" x="380" y="57" text-anchor="middle">passerelle 10.2.0.1</text></g>
+            <g class="node" data-key="pfsense"><rect x="290" y="130" width="180" height="60" rx="10"/><text x="380" y="156" text-anchor="middle" font-weight="700">pfSense CE 2.9</text><text class="sub" x="380" y="176" text-anchor="middle">VM 101 · Proxmox</text></g>
+            <g class="node" data-key="lan"><rect x="40" y="262" width="160" height="64" rx="10"/><text x="120" y="289" text-anchor="middle">LAN</text><text class="sub" x="120" y="309" text-anchor="middle">192.168.10.0/24</text></g>
+            <g class="node" data-key="dmz"><rect x="220" y="262" width="160" height="64" rx="10"/><text x="300" y="289" text-anchor="middle">DMZ</text><text class="sub" x="300" y="309" text-anchor="middle">192.168.20.0/24</text></g>
+            <g class="node" data-key="invites"><rect x="400" y="262" width="160" height="64" rx="10"/><text x="480" y="289" text-anchor="middle">INVITES</text><text class="sub" x="480" y="309" text-anchor="middle">192.168.30.0/24</text></g>
+            <g class="node" data-key="vpn"><rect x="580" y="262" width="140" height="64" rx="10"/><text x="650" y="289" text-anchor="middle">OpenVPN</text><text class="sub" x="650" y="309" text-anchor="middle">10.8.0.0/24</text></g>
+          </svg>
+          <div class="diagram-panel" aria-live="polite"></div>
+          <template data-for="wan"><h4>WAN : réseau de l'école</h4><p>Interface <code>vtnet0</code> sur le pont <code>vmbr0</code>, en adresse fixe <code>10.2.0.8/24</code>, passerelle <code>10.2.0.1</code>, DNS <code>1.1.1.1</code>. Seul le port <strong>UDP 1194</strong> (OpenVPN) est ouvert en entrée. Tout le reste est bloqué par défaut.</p></template>
+          <template data-for="pfsense"><h4>pfSense : le point central</h4><p>VM 101 : 2 cœurs, 2 Gio de RAM, disque de 32 Go en ZFS. Deux cartes VirtIO : <code>net0</code> vers le WAN (<code>vmbr0</code>) et <code>net1</code> vers les réseaux internes (<code>vmbr1</code>). L'interface web n'est joignable que depuis le LAN, sur <code>https://192.168.10.1</code>.</p></template>
+          <template data-for="lan"><h4>LAN : postes internes</h4><p><code>192.168.10.1/24</code>, DHCP de <code>.100</code> à <code>.199</code>. Le LAN garde un accès complet, car c'est la zone de confiance d'où l'on administre.</p></template>
+          <template data-for="dmz"><h4>DMZ : serveurs exposés (VLAN 20)</h4><div class="table-wrap"><table><thead><tr><th>#</th><th>Action</th><th>Destination</th><th>Rôle</th></tr></thead><tbody><tr><td>1</td><td class="ok">Autoriser</td><td><code>192.168.20.1:53</code></td><td>DNS vers sa passerelle</td></tr><tr><td>2</td><td class="ko">Bloquer</td><td><code>rfc1918</code></td><td>Aucun accès aux réseaux privés</td></tr><tr><td>3</td><td class="ok">Autoriser</td><td>tout</td><td>Accès à Internet</td></tr></tbody></table></div></template>
+          <template data-for="invites"><h4>INVITES : Wi-Fi visiteurs (VLAN 30)</h4><div class="table-wrap"><table><thead><tr><th>#</th><th>Action</th><th>Destination</th><th>Rôle</th></tr></thead><tbody><tr><td>1</td><td class="ok">Autoriser</td><td><code>192.168.30.1:53</code></td><td>DNS vers sa passerelle</td></tr><tr><td>2</td><td class="ko">Bloquer</td><td><code>rfc1918</code></td><td>Isolé du LAN et de la DMZ</td></tr><tr><td>3</td><td class="ok">Autoriser</td><td>tout</td><td>Internet uniquement</td></tr></tbody></table></div></template>
+          <template data-for="vpn"><h4>OpenVPN : salariés nomades</h4><p>Serveur <code>vpn-nomades</code>, UDP 1194 sur le WAN, tunnel <code>10.8.0.0/24</code>, accès au réseau local <code>192.168.10.0/24</code>. Authentification double : certificat client <strong>et</strong> identifiant/mot de passe.</p></template>
+        </div>
+      </section>
+
+      <section id="installation">
+        <h2>Installation pas à pas</h2>
+        <ol class="steps">
+          <li><strong>Préparer la VM dans Proxmox</strong>2 cœurs, 2 Gio de RAM, 32 Go de disque, ISO de l'installateur Netgate. Ajout d'une 2<sup>e</sup> carte réseau VirtIO sur <code>vmbr1</code> pour le LAN.</li>
+          <li><strong>Affecter les interfaces</strong><code>vtnet0</code> → WAN, <code>vtnet1</code> → LAN. Le LAN passe de <code>192.168.1.1/24</code> à <code>192.168.10.1/24</code> pour ne pas chevaucher le WAN.</li>
+          <li><strong>Passer le WAN en adresse fixe</strong>Le DHCP du WAN ne donnait pas d'accès Internet : adresse <code>10.2.0.8/24</code>, passerelle <code>10.2.0.1</code>, DNS <code>1.1.1.1</code>.</li>
+          <li><strong>Installer pfSense CE</strong>Version gratuite (CE) 2.9.0, système de fichiers ZFS sur un seul disque.</li>
+          <li><strong>Vérifier</strong>Démarrage sur le disque, menu console avec les bonnes adresses, ping de la passerelle et de <code>1.1.1.1</code> : 3 réponses sur 3.</li>
+          <li><strong>Configurer depuis l'interface web</strong>VLAN DMZ et INVITES, DHCP par zone, alias, règles, serveur VPN, certificats et export des profils clients.</li>
+        </ol>
+        <div class="gallery">
+          <figure><img src="../assets/img/projets/pfsense/03-console-menu.jpg" alt="Menu console de pfSense avec les adresses WAN et LAN" loading="lazy"><figcaption>Menu console : WAN 10.2.0.8, LAN 192.168.10.1</figcaption></figure>
+          <figure><img src="../assets/img/projets/pfsense/04-ping-passerelle.jpg" alt="Ping réussi vers la passerelle depuis pfSense" loading="lazy"><figcaption>Ping de la passerelle : 3/3</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="pare-feu">
+        <h2>Règles de pare-feu</h2>
+        <p>J'ai créé un alias <code>rfc1918</code> qui regroupe tous les réseaux privés. Sur chaque zone isolée, l'ordre des règles est important, car pfSense applique la première qui correspond :</p>
+        <div class="code"><div class="code-head"><span>Firewall › Aliases › rfc1918</span><button class="copy-btn" type="button">Copier</button></div><pre>10.0.0.0/8
+172.16.0.0/12
+192.168.0.0/16</pre></div>
+        <ol>
+          <li><strong>Autoriser le DNS</strong> vers la passerelle de la zone (sinon plus aucune résolution de noms).</li>
+          <li><strong>Bloquer <code>rfc1918</code></strong> : la zone ne peut atteindre aucun autre réseau interne.</li>
+          <li><strong>Autoriser le reste</strong> : il ne reste donc que l'accès à Internet.</li>
+        </ol>
+        <figure class="shot"><img src="../assets/img/projets/pfsense/08-regles-dmz.jpg" alt="Règles de la DMZ : DNS autorisé, rfc1918 bloqué, Internet autorisé" loading="lazy"><figcaption>Firewall › Rules › DMZ : les trois règles dans l'ordre</figcaption></figure>
+      </section>
+
+      <section id="vpn">
+        <h2>Serveur OpenVPN d'accès distant</h2>
+        <p>J'ai d'abord créé une autorité de certification (<code>ca-vpn</code>) et le certificat du serveur (<code>srv-vpn</code>) dans le Cert. Manager, puis le serveur :</p>
+        <div class="code"><div class="code-head"><span>VPN › OpenVPN › Servers › vpn-nomades</span><button class="copy-btn" type="button">Copier</button></div><pre><span class="cm"># Mode et authentification</span>
+Mode            : Remote Access (SSL/TLS + User Auth)
+Protocole/port  : UDP4 / 1194 sur WAN
+<span class="cm"># Réseaux</span>
+Tunnel          : 10.8.0.0/24
+Réseau local    : 192.168.10.0/24
+<span class="cm"># Cryptographie</span>
+CA / certificat : ca-vpn / srv-vpn
+Chiffrements    : AES-256-GCM, AES-128-GCM, CHACHA20-POLY1305
+Digest          : SHA256
+Diffie-Hellman  : 2048 bits</pre></div>
+        <p>Le paquet <code>openvpn-client-export</code> génère ensuite un fichier <code>.ovpn</code> par utilisateur, à importer dans OpenVPN Connect. Quatre comptes ont été créés.</p>
+        <div class="gallery">
+          <figure><img src="../assets/img/projets/pfsense/10-openvpn-serveur.jpg" alt="Serveur OpenVPN configuré dans pfSense" loading="lazy"><figcaption>Serveur vpn-nomades : UDP4/1194, tunnel 10.8.0.0/24</figcaption></figure>
+          <figure><img src="../assets/img/projets/pfsense/11-autorite-certification.jpg" alt="Autorité de certification ca-vpn" loading="lazy"><figcaption>Cert. Manager : autorité ca-vpn</figcaption></figure>
+          <figure><img src="../assets/img/projets/pfsense/12-export-clients.jpg" alt="Outil d'export des profils clients OpenVPN" loading="lazy"><figcaption>Client Export Utility</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="problemes">
+        <h2>Problèmes rencontrés et solutions</h2>
+        <div class="problems">
+          <div class="problem"><div><span class="label label--ko">Problème</span>L'installateur ne voyait qu'une seule carte réseau : impossible d'affecter un LAN.</div><div><span class="label label--ok">Solution</span>Ajout de <code>net1</code> (VirtIO) sur le pont <code>vmbr1</code> dans Proxmox, puis redémarrage de la VM.</div></div>
+          <div class="problem"><div><span class="label label--ko">Problème</span>« Cannot reach the Netgate Servers » : le WAN en DHCP n'avait pas d'accès Internet.</div><div><span class="label label--ok">Solution</span>WAN en adresse fixe <code>10.2.0.8/24</code> avec passerelle et DNS renseignés à la main.</div></div>
+          <div class="problem"><div><span class="label label--ko">Problème</span>ISO éjectée avant le redémarrage : l'installateur est tombé dans un shell et <code>reboot</code> échouait.</div><div><span class="label label--ok">Solution</span>Réinitialisation de la VM depuis Proxmox. À retenir : cliquer sur <em>Reboot</em> d'abord, éjecter l'ISO ensuite.</div></div>
+          <div class="problem"><div><span class="label label--ko">Problème</span>Les raccourcis clavier ne fonctionnaient pas dans la console noVNC.</div><div><span class="label label--ok">Solution</span>Navigation dans l'installateur avec les flèches, Tab et Entrée.</div></div>
+          <div class="problem"><div><span class="label label--ko">Problème</span>VPN injoignable depuis l'extérieur de l'école : les profils pointent vers une adresse privée.</div><div><span class="label label--ok">Solution</span>Profils « externes » préparés. Il reste une redirection du port UDP 1194 à demander à l'administrateur du routeur de l'école.</div></div>
+        </div>
+      </section>
+
+      <section id="captures">
+        <h2>Autres captures</h2>
+        <div class="gallery">
+          <figure><img src="../assets/img/projets/pfsense/02-proxmox-iso-ejectee.jpg" alt="Proxmox : lecteur CD sans média après éjection de l'ISO" loading="lazy"><figcaption>Proxmox : ISO éjectée (lecteur sur « none »)</figcaption></figure>
+          <figure><img src="../assets/img/projets/pfsense/05-dhcp-dmz.jpg" alt="Serveur DHCP activé sur la DMZ" loading="lazy"><figcaption>DHCP activé sur la DMZ</figcaption></figure>
+          <figure><img src="../assets/img/projets/pfsense/06-alias-rfc1918.jpg" alt="Alias rfc1918 dans pfSense" loading="lazy"><figcaption>Alias rfc1918</figcaption></figure>
+          <figure><img src="../assets/img/projets/pfsense/07-regles-wan.jpg" alt="Règle WAN autorisant UDP 1194" loading="lazy"><figcaption>Règle WAN : UDP 1194 pour le VPN</figcaption></figure>
+          <figure><img src="../assets/img/projets/pfsense/09-regles-invites.jpg" alt="Règles de la zone Invités" loading="lazy"><figcaption>Règles de la zone INVITES</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="bilan">
+        <h2>Bilan</h2>
+        <div class="grid grid-2">
+          <div class="card">
+            <h3>Compétences mobilisées</h3>
+            <ul>
+              <li>Virtualisation : création et dépannage d'une VM Proxmox</li>
+              <li>Plan d'adressage et segmentation en VLAN</li>
+              <li>Filtrage : ordre des règles, alias, moindre privilège</li>
+              <li>VPN et PKI : autorité de certification, certificats, authentification double</li>
+              <li>Documentation : compte-rendu avec plus de 100 captures</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Ce que j'en retiens</h3>
+            <ul>
+              <li>Un plan d'adressage sans chevauchement évite la moitié des pannes.</li>
+              <li>Sur un pare-feu, l'ordre des règles compte autant que les règles elles-mêmes.</li>
+              <li>Un VPN dépend aussi du réseau en amont (redirection de port).</li>
+            </ul>
+            <p class="muted" style="margin-top:12px"><strong>Prochaines étapes :</strong> changer le mot de passe administrateur par défaut, obtenir la redirection de port et faire une capture « VPN connecté » depuis l'extérieur.</p>
+          </div>
+        </div>
+        <nav class="pager" aria-label="Projets voisins" style="margin-top:28px">
+          <a href="../projects.html"><small>← Retour</small>Tous les projets</a>
+          <a class="next" href="wazuh-siem.html"><small>Projet suivant →</small>Supervision avec Wazuh</a>
+        </nav>
+      </section>
+    </article>
+  </div>
+</main>
+<script src="../assets/js/main.js" defer></script>
+</body>
+</html>
