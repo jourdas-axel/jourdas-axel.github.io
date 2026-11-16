@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Axel Jourdas · Portfolio BTS SIO SISR</title>
   <meta name="description" content="Portfolio d'Axel Jourdas, étudiant en BTS SIO option SISR en alternance : pare-feu pfSense, VPN, supervision Wazuh, durcissement Linux et Windows, Active Directory, GLPI.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232f55d4'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='700' fill='white' text-anchor='middle'%3EAJ%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%230a1a12'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='700' fill='%235dffa3' text-anchor='middle'%3EAJ%3C/text%3E%3C/svg%3E">
   <script>document.documentElement.classList.remove('no-js');try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -15,37 +15,68 @@
   <section class="hero">
     <div class="container hero-grid">
       <div class="reveal">
-        <span class="status"><span class="dot"></span>BTS SIO option SISR · 2ᵉ année · en alternance</span>
-        <h1>Bonjour, je suis Axel.<br><span class="accent">Futur administrateur systèmes &amp; réseaux.</span></h1>
-        <p class="lead">J'installe, je configure et je sécurise des infrastructures : pare-feu et VPN, supervision de la sécurité, durcissement de serveurs et de postes, annuaire Active Directory et support utilisateur.</p>
+        <span class="eyebrow">Façade · présentation</span>
+        <div class="lcd" data-lines='["STATUS : EN ALTERNANCE","BTS SIO SISR · 2E ANNÉE","LINK UP · PRÊT À ÉCHANGER","SPÉ : RÉSEAU + CYBERSÉCURITÉ"]'><span class="led led--on"></span><span class="lcd-text">STATUS : EN ALTERNANCE</span></div>
+        <h1>Axel Jourdas<span class="accent">Admin systèmes &amp; réseaux en devenir</span></h1>
+        <p class="lead">Étudiant en BTS SIO option SISR à MyDigitalSchool, en alternance. Je câble, je configure et je sécurise : pare-feu et VPN, supervision, durcissement de serveurs et de postes, Active Directory et support.</p>
         <div class="btn-row">
           <a class="btn btn-primary" href="projects.html">Voir mes projets
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           <a class="btn btn-ghost" href="CV%20DIGITAL%20SCHOOL.pdf" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Télécharger mon CV</a>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Mon CV</a>
         </div>
       </div>
-      <div class="hero-card reveal" aria-hidden="true">
-        <div class="bar"><span></span><span></span><span></span></div>
-<pre><span class="k">axel@lab</span>:~$ whoami
-Axel Jourdas · BTS SIO SISR
 
-<span class="k">axel@lab</span>:~$ cat stack.txt
-<span class="c">réseau  </span> pfSense · VLAN · OpenVPN
-<span class="c">système </span> Debian · Windows Server · AD
-<span class="c">sécurité</span> Wazuh · UFW · AppArmor
-<span class="c">support </span> GLPI · parc · tickets
-
-<span class="k">axel@lab</span>:~$ systemctl status motivation
-<span class="ok">● active (running)</span></pre>
+      <div class="card hero-panel reveal">
+        <div class="panel-head"><span><i class="led led--on"></i>PATCH-01 · mes projets</span><span>6 ports actifs</span></div>
+        <div class="patch">
+          <svg viewBox="0 0 520 390" role="group" aria-label="Panneau de brassage : chaque câble mène à un projet">
+            <!-- panneau -->
+            <rect x="8" y="8" width="504" height="78" rx="5" fill="var(--bg)" stroke="var(--plate-edge)"/>
+            <text class="plabel" x="22" y="26">PATCH-01</text><text class="plabel" x="440" y="26">CAT6 · 1U</text>
+            <!-- ports + LED -->
+            <g>
+              <text class="port-num" x="54" y="40">01</text><circle class="pled" cx="76" cy="37" r="3"/><rect class="jack" x="43" y="44" width="34" height="28" rx="2"/>
+              <text class="port-num" x="134" y="40">02</text><circle class="pled pled--act" cx="156" cy="37" r="3"/><rect class="jack" x="123" y="44" width="34" height="28" rx="2"/>
+              <text class="port-num" x="214" y="40">03</text><circle class="pled" cx="236" cy="37" r="3"/><rect class="jack" x="203" y="44" width="34" height="28" rx="2"/>
+              <text class="port-num" x="294" y="40">04</text><circle class="pled" cx="316" cy="37" r="3"/><rect class="jack" x="283" y="44" width="34" height="28" rx="2"/>
+              <text class="port-num" x="374" y="40">05</text><circle class="pled pled--act" cx="396" cy="37" r="3"/><rect class="jack" x="363" y="44" width="34" height="28" rx="2"/>
+              <text class="port-num" x="454" y="40">06</text><circle class="pled" cx="476" cy="37" r="3"/><rect class="jack" x="443" y="44" width="34" height="28" rx="2"/>
+            </g>
+            <!-- câbles (décor, sous les étiquettes) -->
+            <g aria-hidden="true">
+              <g class="c1"><path class="cable" stroke="var(--c-reseau)" d="M60 76 C60 180, 95 210, 95 318"/><path class="cable-shine" d="M58 76 C58 180, 93 210, 93 318"/></g>
+              <g class="c2"><path class="cable" stroke="var(--c-securite)" d="M140 76 C140 160, 260 170, 260 222"/><path class="cable-shine" d="M138 76 C138 160, 258 170, 258 222"/></g>
+              <g class="c3"><path class="cable" stroke="var(--c-systeme)" d="M220 76 C220 200, 430 230, 430 318"/><path class="cable-shine" d="M218 76 C218 200, 428 230, 428 318"/></g>
+              <g class="c4"><path class="cable" stroke="var(--c-support)" d="M300 76 C300 150, 95 160, 95 222"/><path class="cable-shine" d="M298 76 C298 150, 93 160, 93 222"/></g>
+              <g class="c5"><path class="cable" stroke="var(--c-securite)" d="M380 76 C380 150, 430 170, 430 222"/><path class="cable-shine" d="M378 76 C378 150, 428 170, 428 222"/></g>
+              <g class="c6"><path class="cable" stroke="var(--c-systeme)" d="M460 76 C460 230, 260 250, 260 318"/><path class="cable-shine" d="M458 76 C458 230, 258 250, 258 318"/></g>
+              <rect class="plug" x="50" y="56" width="20" height="24" rx="2" fill="var(--c-reseau)"/>
+              <rect class="plug" x="130" y="56" width="20" height="24" rx="2" fill="var(--c-securite)"/>
+              <rect class="plug" x="210" y="56" width="20" height="24" rx="2" fill="var(--c-systeme)"/>
+              <rect class="plug" x="290" y="56" width="20" height="24" rx="2" fill="var(--c-support)"/>
+              <rect class="plug" x="370" y="56" width="20" height="24" rx="2" fill="var(--c-securite)"/>
+              <rect class="plug" x="450" y="56" width="20" height="24" rx="2" fill="var(--c-systeme)"/>
+            </g>
+            <!-- étiquettes : chacune ouvre un projet -->
+            <a href="projets/pfsense-vpn.html" aria-label="Projet pfSense et VPN"><rect class="tagbox" x="20" y="318" width="150" height="48" rx="4"/><text class="lbl" x="34" y="338">pfSense + VPN</text><text class="plabel" x="34" y="355">RÉSEAU · SÉCU</text></a>
+            <a href="projets/wazuh-siem.html" aria-label="Projet Wazuh"><rect class="tagbox" x="185" y="222" width="150" height="48" rx="4"/><text class="lbl" x="199" y="242">Wazuh SIEM</text><text class="plabel" x="199" y="259">SÉCURITÉ</text></a>
+            <a href="projets/active-directory.html" aria-label="Projet Active Directory"><rect class="tagbox" x="355" y="318" width="150" height="48" rx="4"/><text class="lbl" x="369" y="338">Active Directory</text><text class="plabel" x="369" y="355">SYSTÈME</text></a>
+            <a href="projets/glpi.html" aria-label="Projet GLPI"><rect class="tagbox" x="20" y="222" width="150" height="48" rx="4"/><text class="lbl" x="34" y="242">GLPI</text><text class="plabel" x="34" y="259">SUPPORT</text></a>
+            <a href="projets/durcissement-linux.html" aria-label="Projet durcissement Linux"><rect class="tagbox" x="355" y="222" width="150" height="48" rx="4"/><text class="lbl" x="369" y="242">Durcissement Linux</text><text class="plabel" x="369" y="259">SÉCU · SYSTÈME</text></a>
+            <a href="projets/durcissement-windows.html" aria-label="Projet durcissement Windows"><rect class="tagbox" x="185" y="318" width="150" height="48" rx="4"/><text class="lbl" x="199" y="338">Durcissement Win.</text><text class="plabel" x="199" y="355">SÉCU · SYSTÈME</text></a>
+          </svg>
+        </div>
+        <p class="patch-hint">↳ suivez un câble : chaque étiquette ouvre le projet</p>
       </div>
     </div>
+
     <div class="container">
       <div class="stats reveal">
-        <div class="stat"><strong>9</strong><span>projets documentés</span></div>
-        <div class="stat"><strong>170+</strong><span>captures de preuve</span></div>
-        <div class="stat"><strong>3</strong><span>systèmes administrés : Debian, Windows, pfSense</span></div>
-        <div class="stat"><strong>4</strong><span>domaines : réseau, système, sécurité, support</span></div>
+        <div class="stat"><i class="led led--on"></i><strong>09</strong><span>projets documentés</span></div>
+        <div class="stat"><i class="led led--on"></i><strong>170+</strong><span>captures de preuve</span></div>
+        <div class="stat"><i class="led led--act"></i><strong>03</strong><span>OS : Debian · Windows · pfSense</span></div>
+        <div class="stat"><i class="led led--on"></i><strong>04</strong><span>domaines maîtrisés</span></div>
       </div>
     </div>
   </section>
@@ -53,68 +84,68 @@ Axel Jourdas · BTS SIO SISR
   <section class="section section--alt">
     <div class="container">
       <div class="section-head reveal">
-        <span class="eyebrow">Projets phares</span>
-        <h2>Ce que j'ai construit récemment</h2>
-        <p class="lead">Chaque projet a sa page : contexte, étapes, commandes, problèmes rencontrés et captures.</p>
+        <span class="eyebrow">Modules installés</span>
+        <h2>Projets phares</h2>
+        <p class="lead">Chaque projet a sa fiche : contexte, étapes, commandes, problèmes rencontrés et captures.</p>
       </div>
       <div class="grid grid-3">
-        <a class="card project-card reveal" href="projets/pfsense-vpn.html">
+        <a class="card project-card reveal" href="projets/pfsense-vpn.html" data-cat="reseau securite">
           <div class="thumb"><img src="assets/img/projets/pfsense/08-regles-dmz.jpg" alt="Règles de pare-feu de la DMZ dans pfSense" loading="lazy"></div>
           <div class="body">
             <div class="tags"><span class="tag tag--reseau">Réseau</span><span class="tag tag--securite">Sécurité</span></div>
             <h3>Pare-feu pfSense et VPN nomade</h3>
             <p>pfSense sur Proxmox, segmentation LAN / DMZ / Invités en VLAN et serveur OpenVPN d'accès distant.</p>
-            <div class="meta"><span>Oct. 2026</span><span class="more">Voir le projet →</span></div>
+            <div class="meta"><span>Oct. 2026</span><span class="more">Ouvrir →</span></div>
           </div>
         </a>
-        <a class="card project-card reveal" href="projets/glpi.html">
-          <div class="thumb"><img src="assets/img/projets/glpi/03-tableau-de-bord.jpg" alt="Tableau de bord GLPI" loading="lazy"></div>
-          <div class="body">
-            <div class="tags"><span class="tag tag--support">Support</span><span class="tag tag--systeme">Système</span></div>
-            <h3>GLPI : parc et centre de support</h3>
-            <p>Déploiement de GLPI, inventaire, profils et traitement de tickets de bout en bout.</p>
-            <div class="meta"><span>2025 – 2026</span><span class="more">Voir le projet →</span></div>
-          </div>
-        </a>
-        <a class="card project-card reveal" href="projets/durcissement-linux.html">
+        <a class="card project-card reveal" href="projets/durcissement-linux.html" data-cat="securite systeme">
           <div class="thumb"><img src="assets/img/projets/durcissement-linux/07-ports-avant.png" alt="Ports en écoute avant durcissement (ss -tulpn)" loading="lazy"></div>
           <div class="body">
             <div class="tags"><span class="tag tag--securite">Sécurité</span><span class="tag tag--systeme">Système</span></div>
             <h3>Durcissement d'un serveur Debian</h3>
             <p>SSH par clé, pare-feu UFW, Fail2ban, AppArmor et audit Lynis avant / après.</p>
-            <div class="meta"><span>Sept. 2026</span><span class="more">Voir le projet →</span></div>
+            <div class="meta"><span>Sept. 2026</span><span class="more">Ouvrir →</span></div>
+          </div>
+        </a>
+        <a class="card project-card reveal" href="projets/glpi.html" data-cat="support systeme">
+          <div class="thumb"><img src="assets/img/projets/glpi/03-tableau-de-bord.jpg" alt="Tableau de bord GLPI" loading="lazy"></div>
+          <div class="body">
+            <div class="tags"><span class="tag tag--support">Support</span><span class="tag tag--systeme">Système</span></div>
+            <h3>GLPI : parc et centre de support</h3>
+            <p>Déploiement de GLPI, inventaire, profils et traitement de tickets de bout en bout.</p>
+            <div class="meta"><span>2025 – 2026</span><span class="more">Ouvrir →</span></div>
           </div>
         </a>
       </div>
-      <p style="margin-top:28px"><a class="btn btn-ghost" href="projects.html">Tous les projets (9) →</a></p>
+      <p style="margin-top:26px"><a class="btn btn-ghost" href="projects.html">Tous les projets (9) →</a></p>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
       <div class="section-head reveal">
-        <span class="eyebrow">Ce que je fais</span>
-        <h2>Quatre domaines, une même logique</h2>
-        <p class="lead">Comprendre, configurer, vérifier, documenter. Chaque compétence ci-dessous est prouvée par un projet.</p>
+        <span class="eyebrow">Code couleur</span>
+        <h2>Un câble par domaine</h2>
+        <p class="lead">Comme dans une vraie baie, chaque couleur a un rôle. Vous la retrouverez sur tous mes projets.</p>
       </div>
       <div class="grid grid-4">
-        <div class="card reveal">
-          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="6" rx="1"/><rect x="14" y="15" width="7" height="6" rx="1"/><rect x="3" y="15" width="7" height="6" rx="1"/><path d="M6.5 9v6M10 18h4M17.5 15v-3h-11"/></svg></div>
+        <div class="card reveal" style="box-shadow: inset 0 4px 0 var(--c-reseau), var(--shadow)">
+          <div class="card-icon" style="color:var(--c-reseau)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="6" rx="1"/><rect x="14" y="15" width="7" height="6" rx="1"/><rect x="3" y="15" width="7" height="6" rx="1"/><path d="M6.5 9v6M10 18h4M17.5 15v-3h-11"/></svg></div>
           <h3>Réseau</h3>
-          <p class="muted">Adressage, VLAN, DHCP, DNS, routage et pare-feu. Topologies Cisco sur Packet Tracer.</p>
+          <p class="muted">Adressage, VLAN, DHCP, DNS, routage, pare-feu et VPN. Topologies Cisco sur Packet Tracer.</p>
         </div>
-        <div class="card reveal">
-          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
+        <div class="card reveal" style="box-shadow: inset 0 4px 0 var(--c-systeme), var(--shadow)">
+          <div class="card-icon" style="color:var(--c-systeme)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
           <h3>Système</h3>
-          <p class="muted">Debian, Windows Server et Active Directory, virtualisation sous Proxmox, scripts PowerShell et Bash.</p>
+          <p class="muted">Debian, Windows Server et Active Directory, virtualisation Proxmox, PowerShell et Bash.</p>
         </div>
-        <div class="card reveal">
-          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="card reveal" style="box-shadow: inset 0 4px 0 var(--c-securite), var(--shadow)">
+          <div class="card-icon" style="color:var(--c-securite)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
           <h3>Cybersécurité</h3>
-          <p class="muted">Durcissement selon les guides CIS et ANSSI, supervision avec Wazuh, CTF et entraînement sur TryHackMe.</p>
+          <p class="muted">Durcissement CIS / ANSSI, supervision Wazuh, CTF et entraînement sur TryHackMe.</p>
         </div>
-        <div class="card reveal">
-          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="1.5"/><rect x="17" y="14" width="5" height="6" rx="1.5"/></svg></div>
+        <div class="card reveal" style="box-shadow: inset 0 4px 0 var(--c-support), var(--shadow)">
+          <div class="card-icon" style="color:var(--c-support)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="1.5"/><rect x="17" y="14" width="5" height="6" rx="1.5"/></svg></div>
           <h3>Support</h3>
           <p class="muted">Gestion de parc et de tickets avec GLPI, diagnostic, relation avec les utilisateurs.</p>
         </div>
@@ -127,9 +158,9 @@ Axel Jourdas · BTS SIO SISR
       <div class="cta reveal">
         <div>
           <h2>Un stage, une alternance, une question ?</h2>
-          <p>Je réponds rapidement par e-mail ou sur LinkedIn.</p>
+          <p>Le port est ouvert : je réponds rapidement par e-mail ou sur LinkedIn.</p>
         </div>
-        <a class="btn btn-primary" href="contact.html">Me contacter</a>
+        <a class="btn btn-primary" href="contact.html">Établir la connexion</a>
       </div>
     </div>
   </section>

@@ -29,24 +29,27 @@
 
   /* ---------- Thème ---------- */
   var html = document.documentElement;
-  function systemTheme() { return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
   var stored = null;
   try { stored = localStorage.getItem('theme'); } catch (e) {}
-  html.setAttribute('data-theme', stored || systemTheme());
+  html.setAttribute('data-theme', stored === 'light' ? 'light' : 'dark'); /* baie noire par défaut */
 
-  /* ---------- En-tête ---------- */
+  /* ---------- En-tête : panneau de brassage ---------- */
   var header = document.createElement('header');
   header.className = 'site-header';
-  var links = NAV.map(function (n) {
+  var links = NAV.map(function (n, i) {
     var cur = (n[2] === page) ? ' aria-current="page"' : '';
-    return '<li><a href="' + root + n[0] + '"' + cur + '>' + n[1] + '</a></li>';
+    var num = (i + 1 < 10 ? '0' : '') + (i + 1);
+    return '<li><a class="port" href="' + root + n[0] + '"' + cur + '>' +
+      '<span class="port-top" aria-hidden="true"><i class="led"></i>' + num + '</span>' +
+      '<span class="port-jack" aria-hidden="true"></span>' +
+      '<span class="port-label">' + n[1] + '</span></a></li>';
   }).join('');
   header.innerHTML =
     '<div class="container">' +
-      '<a class="brand" href="' + root + 'index.html" aria-label="Accueil"><span class="brand-mark">AJ</span><span>Axel Jourdas</span></a>' +
+      '<a class="brand" href="' + root + 'index.html" aria-label="Accueil"><span class="brand-mark">AJ</span><span class="brand-txt"><b>Axel Jourdas</b><small>RACK-01 · BTS SIO SISR</small></span></a>' +
       '<nav class="main-nav" id="main-nav" aria-label="Navigation principale"><ul>' + links + '</ul></nav>' +
       '<div class="header-actions">' +
-        '<button class="icon-btn theme-toggle" type="button" aria-label="Changer de thème" title="Thème clair / sombre"><span class="moon">' + ICONS.moon + '</span><span class="sun">' + ICONS.sun + '</span></button>' +
+        '<button class="icon-btn theme-toggle" type="button" aria-label="Changer de thème" title="Baie noire / baie grise"><span class="moon">' + ICONS.moon + '</span><span class="sun">' + ICONS.sun + '</span></button>' +
         '<button class="icon-btn menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="main-nav">' + ICONS.menu + '</button>' +
       '</div>' +
     '</div>';
@@ -60,7 +63,7 @@
   footer.className = 'site-footer';
   footer.innerHTML =
     '<div class="container">' +
-      '<p style="margin:0">© ' + new Date().getFullYear() + ' Axel Jourdas · BTS SIO option SISR</p>' +
+      '<div class="pdu"><i class="led led--on"></i><span>PDU · alim OK</span><i class="led led--act"></i><span>© ' + new Date().getFullYear() + ' Axel Jourdas</span></div>' +
       '<nav aria-label="Liens utiles">' +
         '<a href="' + root + 'CV%20DIGITAL%20SCHOOL.pdf" target="_blank" rel="noopener">CV (PDF)</a>' +
         '<a href="mailto:axel.jourdas@gmail.com">E-mail</a>' +
@@ -90,6 +93,20 @@
   nav.addEventListener('click', function (e) { if (e.target.tagName === 'A') setMenu(false); });
   function onScroll() { header.classList.toggle('scrolled', window.scrollY > 8); }
   window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  /* ---------- Écran LCD : messages qui défilent ---------- */
+  document.querySelectorAll('.lcd[data-lines]').forEach(function (lcd) {
+    var lines; try { lines = JSON.parse(lcd.getAttribute('data-lines')); } catch (e) { return; }
+    var out = lcd.querySelector('.lcd-text'); if (!out || !lines.length) return;
+    var li = 0;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function typeLine() {
+      var txt = lines[li % lines.length], i = 0; li++;
+      if (reduce) { out.textContent = txt; setTimeout(typeLine, 3500); return; }
+      (function step() { out.textContent = txt.slice(0, i++); if (i <= txt.length) setTimeout(step, 38); else setTimeout(typeLine, 2600); })();
+    }
+    typeLine();
+  });
 
   /* ---------- Apparition au défilement ---------- */
   var reveals = document.querySelectorAll('.reveal');
