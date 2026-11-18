@@ -258,6 +258,7 @@ code, kbd, pre { font-family: var(--font-mono); }
 .patch g.c2 .cable, .patch g.c2 .cable-shine { animation-delay: .15s; } .patch g.c3 .cable, .patch g.c3 .cable-shine { animation-delay: .3s; }
 .patch g.c4 .cable, .patch g.c4 .cable-shine { animation-delay: .45s; } .patch g.c5 .cable, .patch g.c5 .cable-shine { animation-delay: .6s; }
 .patch g.c6 .cable, .patch g.c6 .cable-shine { animation-delay: .75s; }
+.patch g.c7 .cable, .patch g.c7 .cable-shine { animation-delay: .9s; } .patch g.c8 .cable, .patch g.c8 .cable-shine { animation-delay: 1.05s; }
 .patch-hint { font-family: var(--font-mono); font-size: .72rem; color: var(--muted); text-align: center; margin: 6px 0 0; }
 @media (max-width: 900px) { .hero-grid { grid-template-columns: minmax(0, 1fr); } .hero { padding: 40px 0; } }
 
