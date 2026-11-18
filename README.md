@@ -1,5 +1,7 @@
 # Portfolio · Axel Jourdas
 
+🔗 **Site en ligne : https://jourdas-axel.github.io**
+
 Portfolio d'étudiant en **BTS SIO option SISR** (Solutions d'Infrastructure, Systèmes et Réseaux), en alternance à MyDigitalSchool.
 
 Le site est pensé comme une **baie réseau** : le menu est un panneau de brassage, chaque bloc est une façade d'équipement et chaque domaine a sa couleur de câble (bleu = réseau, rouge = sécurité, vert = système, orange = support).

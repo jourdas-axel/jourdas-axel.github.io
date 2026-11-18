@@ -68,6 +68,7 @@
         '<a href="' + root + 'CV%20DIGITAL%20SCHOOL.pdf" target="_blank" rel="noopener">CV (PDF)</a>' +
         '<a href="mailto:axel.jourdas@gmail.com">E-mail</a>' +
         '<a href="https://www.linkedin.com/in/axel-jourdas/" target="_blank" rel="noopener">LinkedIn</a>' +
+        '<a href="https://github.com/jourdas-axel" target="_blank" rel="noopener">GitHub</a>' +
         '<a href="' + root + 'contact.html">Contact</a>' +
       '</nav>' +
     '</div>';
